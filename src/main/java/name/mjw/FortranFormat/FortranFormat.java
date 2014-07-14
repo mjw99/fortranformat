@@ -1072,15 +1072,6 @@ public class FortranFormat {
 		}
 
 		/**
-		 * Gets the type.
-		 *
-		 * @return the EditDescriptor type
-		 */
-		public EditDescriptor getType() {
-			return type;
-		}
-
-		/**
 		 * Gets the length.
 		 *
 		 * @return the length
