@@ -923,7 +923,7 @@ public class FortranFormat {
 		 * @throws ParseException
 		 *             the parse exception
 		 */
-		private final int findClosingParenthesis(final String withParen,
+		private int findClosingParenthesis(final String withParen,
 				final int open) throws ParseException {
 			final Stack<Integer> s = new Stack<Integer>();
 			for (int i = open + 1; i < withParen.length(); i++) {
