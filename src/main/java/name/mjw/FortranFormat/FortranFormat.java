@@ -1390,6 +1390,8 @@ public class FortranFormat {
 				case POSITIONING_TAB_RIGHT:
 					place += u.length + sb.length();
 					break;
+				default:
+					break;
 				}
 				sb = new StringBuilder();
 			} else {
