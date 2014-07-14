@@ -118,7 +118,7 @@ public class FortranFormat {
 					final Options options) throws IOException {
 				if (s.length() == 0) {
 					if (options.isReturnZeroForBlanks()) {
-						return Integer.valueOf(0);
+						return 0;
 					} else {
 						return null;
 					}
@@ -201,7 +201,7 @@ public class FortranFormat {
 							* Math.pow(10, Integer.parseInt(end));
 				}
 				if (returning == null && options.isReturnZeroForBlanks()) {
-					returning = Double.valueOf(0);
+					returning = (double) 0;
 				}
 				if (returning == null) {
 					return null;
