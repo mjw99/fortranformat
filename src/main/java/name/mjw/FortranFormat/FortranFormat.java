@@ -885,11 +885,8 @@ public class FortranFormat {
 		 *
 		 * @return the string
 		 *
-		 * @throws ParseException
-		 *             the parse exception
 		 */
-		final String removeParenthesis(final String input)
-				throws ParseException {
+		final String removeParenthesis(final String input) {
 			final StringBuilder sb = new StringBuilder();
 			boolean hitParenthesis = false;
 			for (int i = 0; i < input.length(); i++) {
