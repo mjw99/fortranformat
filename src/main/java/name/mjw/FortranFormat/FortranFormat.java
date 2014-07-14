@@ -445,8 +445,8 @@ public class FortranFormat {
 			}
 		},
 
-		/** The POITIONING_HORIZONTAL. */
-		POITIONING_HORIZONTAL("X", true) {
+		/** The POSITIONING_HORIZONTAL. */
+		POSITIONING_HORIZONTAL("X", true) {
 			@Override
 			public String format(final Unit u, final Object o,
 					final Options options) {
@@ -763,7 +763,7 @@ public class FortranFormat {
 				if (c == '(' || c == ')' || c == ',') {
 					// skip over
 					sb.append(c);
-				} else if (c == EditDescriptor.POITIONING_HORIZONTAL.getTag()
+				} else if (c == EditDescriptor.POSITIONING_HORIZONTAL.getTag()
 						.charAt(0)) {
 					sb.append(c);
 					if (i != input.length() - 1 && input.charAt(i + 1) != ')'
@@ -853,7 +853,7 @@ public class FortranFormat {
 				} else if (Character.isDigit(c) && current.length() == 0) {
 					number.append(c);
 				} else {
-					if (c == EditDescriptor.POITIONING_HORIZONTAL.getTag()
+					if (c == EditDescriptor.POSITIONING_HORIZONTAL.getTag()
 							.charAt(0)) {
 						sb.append(number);
 						number.delete(0, number.length());
@@ -985,7 +985,7 @@ public class FortranFormat {
 				int repeats = before.length() == 0 ? 1 : Integer
 						.parseInt(before.toString());
 				if (type.toString().equals(
-						EditDescriptor.POITIONING_HORIZONTAL.getTag())) {
+						EditDescriptor.POSITIONING_HORIZONTAL.getTag())) {
 					after = before;
 					repeats = 1;
 				}
