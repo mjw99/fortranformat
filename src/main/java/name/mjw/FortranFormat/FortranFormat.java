@@ -232,7 +232,7 @@ public class FortranFormat {
 			public String format(final Unit u, final Object o,
 					final Options options) throws IOException {
 				throw new java.io.IOException(
-						"Ouput for the D edit descriptor is not supported.");
+						"Output for the D edit descriptor is not supported.");
 			}
 
 			@Override
@@ -400,7 +400,7 @@ public class FortranFormat {
 			public String format(final Unit u, final Object o,
 					final Options options) throws IOException {
 				throw new java.io.IOException(
-						"Ouput for the BN edit descriptor is not supported.");
+						"Output for the BN edit descriptor is not supported.");
 			}
 
 			@Override
@@ -417,7 +417,7 @@ public class FortranFormat {
 			public String format(final Unit u, final Object o,
 					final Options options) throws IOException {
 				throw new java.io.IOException(
-						"Ouput for the BZ edit descriptor is not supported.");
+						"Output for the BZ edit descriptor is not supported.");
 			}
 
 			@Override
@@ -465,7 +465,7 @@ public class FortranFormat {
 			}
 		},
 
-		/** The POSITIONIN g_ tab. */
+		/** The POSITIONING_TAB. */
 		POSITIONING_TAB("T", true) {
 			@Override
 			public String format(final Unit u, final Object o,
@@ -538,7 +538,7 @@ public class FortranFormat {
 			public String format(final Unit u, final Object o,
 					final Options options) throws IOException {
 				throw new java.io.IOException(
-						"Ouput for the S edit descriptor is not supported.");
+						"Output for the S edit descriptor is not supported.");
 			}
 
 			@Override
@@ -555,7 +555,7 @@ public class FortranFormat {
 			public String format(final Unit u, final Object o,
 					final Options options) throws IOException {
 				throw new java.io.IOException(
-						"Ouput for the SP edit descriptor is not supported.");
+						"Output for the SP edit descriptor is not supported.");
 			}
 
 			@Override
@@ -572,7 +572,7 @@ public class FortranFormat {
 			public String format(final Unit u, final Object o,
 					final Options options) throws IOException {
 				throw new java.io.IOException(
-						"Ouput for the SS edit descriptor is not supported.");
+						"Output for the SS edit descriptor is not supported.");
 			}
 
 			@Override
