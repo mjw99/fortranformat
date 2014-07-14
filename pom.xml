@@ -17,6 +17,39 @@
 	</properties>
 
 
+	<developers>
+		<developer>
+			<id>mjw99</id>
+			<name>Mark J. Williamson</name>
+			<email>mjw@mjw.name</email>
+			<roles>
+				<role>Maveniser</role>
+			</roles>
+			<timezone>0</timezone>
+		</developer>
+	</developers>
+
+
+	<scm>
+		<connection>scm:git:https://bitbucket.org/mjw99/fortranformat</connection>
+		<url>https://bitbucket.org/mjw99/fortranformat</url>
+	</scm>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+
+			</plugin>
+		</plugins>
+
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
