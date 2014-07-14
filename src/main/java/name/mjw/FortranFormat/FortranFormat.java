@@ -659,8 +659,8 @@ public class FortranFormat {
 		 *
 		 * @return the formatted string
 		 */
-		protected String format(final String s, final int length,
-				final boolean rightAligned) {
+        String format(final String s, final int length,
+                      final boolean rightAligned) {
 			final StringBuilder sb = new StringBuilder();
 			if (s == null) {
 				for (int i = 0; i < length; i++) {
@@ -702,7 +702,7 @@ public class FortranFormat {
 	/**
 	 * The Class SpecificationStringInterpreter.
 	 */
-	protected static class SpecificationStringInterpreter {
+	static class SpecificationStringInterpreter {
 
 		/** Cached strings along each step of the pre-processing. */
 		private final String original, input, withoutParenthesis,
@@ -753,7 +753,7 @@ public class FortranFormat {
 		 *
 		 * @return the string
 		 */
-		protected final String checkCommas(final String input) {
+		final String checkCommas(final String input) {
 			final StringBuilder sb = new StringBuilder();
 			boolean hitE = false;
 			boolean lastWasChar = true;
@@ -812,7 +812,7 @@ public class FortranFormat {
 		 * @throws ParseException
 		 *             the parse exception
 		 */
-		protected final String multiplyOut(final String input)
+		final String multiplyOut(final String input)
 				throws ParseException {
 			final StringBuilder sb = new StringBuilder();
 			final StringBuilder current = new StringBuilder();
@@ -888,7 +888,7 @@ public class FortranFormat {
 		 * @throws ParseException
 		 *             the parse exception
 		 */
-		protected final String removeParenthesis(final String input)
+		final String removeParenthesis(final String input)
 				throws ParseException {
 			final StringBuilder sb = new StringBuilder();
 			boolean hitParenthesis = false;
@@ -1287,7 +1287,7 @@ public class FortranFormat {
 	 * @throws ParseException
 	 *             the parse exception
 	 */
-	public FortranFormat(final String specificationString)
+    private FortranFormat(final String specificationString)
 			throws ParseException {
 		units = new SpecificationStringInterpreter(specificationString)
 				.getUnits();
@@ -1304,7 +1304,7 @@ public class FortranFormat {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public ArrayList<Object> parse(final String s) throws IOException {
+    ArrayList<Object> parse(final String s) throws IOException {
 		final StringTokenizer st = new StringTokenizer(s, "\n");
 		final ArrayList<Object> returning = new ArrayList<Object>(units.size());
 		StringReader sr = new StringReader(st.hasMoreTokens() ? st.nextToken()
@@ -1360,7 +1360,7 @@ public class FortranFormat {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public String format(final ArrayList<Object> objects) throws IOException {
+    String format(final ArrayList<Object> objects) throws IOException {
 		int minus = 0;
 		StringBuilder sb = new StringBuilder();
 		int place = -1;
