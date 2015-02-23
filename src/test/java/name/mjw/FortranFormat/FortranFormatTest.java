@@ -447,7 +447,7 @@ public class FortranFormatTest {
 		os.add(12);
 		os.add(768);
 		os.add(3.715);
-		assertEquals("  12     768   3.72",
+		assertEquals("  12     768   3.71",
 				FortranFormat.write(os, "(1X,I3,3X,I5,2X,F5.2)"));
 	}
 
