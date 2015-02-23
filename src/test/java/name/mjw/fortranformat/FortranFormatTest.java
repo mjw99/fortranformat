@@ -1,4 +1,4 @@
-package name.mjw.FortranFormat;
+package name.mjw.fortranformat;
 
 import static org.junit.Assert.*;
 
@@ -6,7 +6,8 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
-import name.mjw.FortranFormat.FortranFormat.SpecificationStringInterpreter;
+import name.mjw.fortranformat.FortranFormat;
+import name.mjw.fortranformat.FortranFormat.SpecificationStringInterpreter;
 
 public class FortranFormatTest {
 
