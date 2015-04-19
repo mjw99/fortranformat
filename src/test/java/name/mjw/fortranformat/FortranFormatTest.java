@@ -453,6 +453,19 @@ public class FortranFormatTest {
 	}
 
 	@Test
+	public void testRounding() throws Exception {
+		// write
+		final ArrayList<Object> os = new ArrayList<Object>();
+		os.add(0.8055);
+		os.add(1.1015);
+		os.add(1.1835);
+		os.add(7.9005);
+
+		assertEquals("0.805 1.101 1.183 7.901",
+				FortranFormat.write(os, "(F5.3,1X,F5.3,1X,F5.3,1X,F5.3)"));
+	}
+
+	@Test
 	public void testTabs() throws Exception {
 		// write
 		final ArrayList<Object> os = new ArrayList<Object>();
