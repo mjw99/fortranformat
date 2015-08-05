@@ -17,13 +17,16 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<maven.min-version>3.0.4</maven.min-version>
+		<maven.min-version>2.2.1</maven.min-version>
 
 		<!-- Use: mvn versions:display-dependency-updates to check for updates 
 			for these below -->
 		<junit.version>4.12</junit.version>
 	</properties>
 
+	<prerequisites>
+		<maven>${maven.min-version}</maven>
+	</prerequisites>
 
 	<developers>
 		<developer>
