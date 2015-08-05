@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>name.mjw</groupId>
 	<artifactId>FortranFormat</artifactId>
-	<version>1.1.4</version>
+	<version>1.1.0</version>
 	<name>FortranFormat</name>
         <description>FortranFormat is an open source Java library for parsing input and formatting output using Fortran Format specification.</description>
         <url>http://www.ichemlabs.com/fortranformat</url>
