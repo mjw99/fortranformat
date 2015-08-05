@@ -1256,7 +1256,7 @@ public class FortranFormat {
 	 * @param format
 	 *            is the format specification
 	 *
-	 * @return a ArrayList<object> of all the parsed data as Java objects
+	 * @return ArrayList of all the parsed data as Java objects
 	 *
 	 * @throws ParseException
 	 *             the parse exception
