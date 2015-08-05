@@ -44,6 +44,13 @@
 			</roles>
 			<timezone>0</timezone>
 		</developer>
+                <developer>
+                        <id>tn300</id>
+                        <name>Teodor Nikolov</name>
+                        <email>tn300@cam.ac.uk</email>
+                        <timezone>0</timezone>
+                </developer>
+
 	</developers>
 
 
