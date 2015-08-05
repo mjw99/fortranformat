@@ -38,7 +38,6 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -178,7 +177,10 @@ public class FortranFormat {
 					for (int j = 0; j < u.getDecimalLength(); j++) {
 						dfs.append('0');
 					}
-					double bd = new BigDecimal(d).setScale(u.getDecimalLength(), RoundingMode.HALF_UP).doubleValue();
+					// Work around for JDK-7131459
+					Double bd = new BigDecimal(d).setScale(u.getDecimalLength(),
+							RoundingMode.HALF_UP).doubleValue();
+
 					s = (neg ? '-' : "") + new DecimalFormat(dfs.toString()).format(bd);
 				}
 				return format(s, u.getLength(), true);
@@ -280,14 +282,22 @@ public class FortranFormat {
 					for (int j = 0; j < u.getDecimalLength(); j++) {
 						dfs.append('0');
 					}
+					// Work around for JDK-7131459
+					Double bd = new BigDecimal(d).setScale(u.getDecimalLength(),
+							RoundingMode.HALF_UP).doubleValue();
+
 					s = (neg ? "-" : "")
-							+ new DecimalFormat(dfs.toString()).format(d);
+							+ new DecimalFormat(dfs.toString()).format(bd);
 					dfs = new StringBuilder();
 					for (int j = 0; j < u.getExponentLength(); j++) {
 						dfs.append('0');
 					}
+					// Work around for JDK-7131459
+					Double bd2 = new BigDecimal(exp).setScale(u.getDecimalLength(),
+							RoundingMode.HALF_UP).doubleValue();
+
 					s = s + "E" + (expneg ? "-" : "+")
-							+ new DecimalFormat(dfs.toString()).format(exp);
+							+ new DecimalFormat(dfs.toString()).format(bd2);
 				}
 				return format(s, u.getLength(), true);
 			}
@@ -335,8 +345,12 @@ public class FortranFormat {
 					for (int j = 0; j < u.getExponentLength(); j++) {
 						dfs.append('0');
 					}
+					// Work around for JDK-7131459
+					Double bd = new BigDecimal(exp).setScale(u.getDecimalLength(),
+							RoundingMode.HALF_UP).doubleValue();
+
 					s = s + 'E' + (expneg ? '-' : '+')
-							+ new DecimalFormat(dfs.toString()).format(exp);
+							+ new DecimalFormat(dfs.toString()).format(bd);
 				}
 				return format(s, u.getLength(), true);
 			}
@@ -384,8 +398,12 @@ public class FortranFormat {
 					for (int j = 0; j < u.getExponentLength(); j++) {
 						dfs.append('0');
 					}
+					// Work around for JDK-7131459
+					Double bd = new BigDecimal(exp).setScale(u.getDecimalLength(),
+							RoundingMode.HALF_UP).doubleValue();
+
 					s = s + "E" + (expneg ? "-" : "+")
-							+ new DecimalFormat(dfs.toString()).format(exp);
+							+ new DecimalFormat(dfs.toString()).format(bd);
 				}
 				return format(s, u.getLength(), true);
 			}
