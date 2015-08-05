@@ -35,7 +35,10 @@ package name.mjw.fortranformat;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -175,8 +178,8 @@ public class FortranFormat {
 					for (int j = 0; j < u.getDecimalLength(); j++) {
 						dfs.append('0');
 					}
-					s = (neg ? '-' : "")
-							+ new DecimalFormat(dfs.toString()).format(d);
+					double bd = new BigDecimal(d).setScale(u.getDecimalLength(), RoundingMode.HALF_UP).doubleValue();
+					s = (neg ? '-' : "") + new DecimalFormat(dfs.toString()).format(bd);
 				}
 				return format(s, u.getLength(), true);
 			}
