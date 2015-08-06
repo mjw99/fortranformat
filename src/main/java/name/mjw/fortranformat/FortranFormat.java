@@ -1305,7 +1305,7 @@ public class FortranFormat {
 	 * @throws ParseException
 	 *             the parse exception
 	 */
-    private FortranFormat(final String specificationString)
+    public FortranFormat(final String specificationString)
 			throws ParseException {
 		units = new SpecificationStringInterpreter(specificationString)
 				.getUnits();
@@ -1322,7 +1322,7 @@ public class FortranFormat {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-    ArrayList<Object> parse(final String s) throws IOException {
+    public ArrayList<Object> parse(final String s) throws IOException {
 		final StringTokenizer st = new StringTokenizer(s, "\n");
 		final ArrayList<Object> returning = new ArrayList<Object>(units.size());
 		StringReader sr = new StringReader(st.hasMoreTokens() ? st.nextToken()
