@@ -39,9 +39,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.Stack;
 import java.util.StringTokenizer;
 
 /**
@@ -50,7 +51,7 @@ import java.util.StringTokenizer;
 public class FortranFormat {
 
 	/** A hash of the descriptors for easy access. */
-	private final static HashMap<String, EditDescriptor> DESCRIPTOR_HASH = new HashMap<String, EditDescriptor>(
+	private static final HashMap<String, EditDescriptor> DESCRIPTOR_HASH = new HashMap<String, EditDescriptor>(
 			EditDescriptor.values().length);
 
 	static {
@@ -181,11 +182,11 @@ public class FortranFormat {
 					returning = s.length() == 0 ? null
 							: Double.parseDouble(s) / (s.indexOf('.') == -1 ? Math.pow(10, u.getDecimalLength()) : 1);
 				} else {
-					String end = s.substring(s.indexOf("E") + 1);
+					String end = s.substring(s.indexOf('E') + 1);
 					if (end.startsWith("+")) {
 						end = end.substring(1);
 					}
-					s = s.substring(0, s.indexOf("E"));
+					s = s.substring(0, s.indexOf('E'));
 					returning = s.length() == 0 ? null
 							: Double.parseDouble(s) / (s.indexOf('.') == -1 ? Math.pow(10, u.getDecimalLength()) : 1)
 									* Math.pow(10, Integer.parseInt(end));
@@ -642,7 +643,12 @@ public class FortranFormat {
 	static class SpecificationStringInterpreter {
 
 		/** Cached strings along each step of the pre-processing. */
-		private final String original, input, withoutParenthesis, multipliedOut, withCommas;
+
+		private final String original;
+		private final String input;
+		private final String withoutParenthesis;
+		private final String multipliedOut;
+		private final String withCommas;
 
 		/**
 		 * Instantiates a new specification string interpreter.
@@ -835,7 +841,7 @@ public class FortranFormat {
 		 * @throws ParseException the parse exception
 		 */
 		private int findClosingParenthesis(final String withParen, final int open) throws ParseException {
-			final Stack<Integer> s = new Stack<Integer>();
+			final Deque<Integer> s = new ArrayDeque<Integer>();
 			for (int i = open + 1; i < withParen.length(); i++) {
 				final char c = withParen.charAt(i);
 				switch (c) {
@@ -866,9 +872,13 @@ public class FortranFormat {
 			final ArrayList<Unit> units = new ArrayList<Unit>(st.countTokens());
 			while (st.hasMoreTokens()) {
 				final String s = st.nextToken();
-				boolean reachedType = false, hasDecimal = false, hasExponent = false;
-				final StringBuilder before = new StringBuilder(), type = new StringBuilder(),
-						decimal = new StringBuilder(), exponent = new StringBuilder();
+				boolean reachedType = false;
+				boolean hasDecimal = false;
+				boolean hasExponent = false;
+				final StringBuilder before = new StringBuilder();
+				final StringBuilder type = new StringBuilder();
+				final StringBuilder decimal = new StringBuilder();
+				final StringBuilder exponent = new StringBuilder();
 				StringBuilder after = new StringBuilder();
 				for (int i = 0; i < s.length(); i++) {
 					if (s.charAt(i) == '.') {
