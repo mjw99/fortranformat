@@ -9,6 +9,13 @@ pipelines:
   default:
     - parallel:
       - step:
+          name: Java 7
+          image: maven:3.6.1-jdk-7-slim
+          caches:
+            - maven
+          script: # Modify the commands below to build your repository.
+            - mvn -B clean test
+      - step:
           name: Java 8
           image: maven:3.6.1-jdk-8-slim
           caches:
