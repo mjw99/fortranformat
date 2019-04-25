@@ -1282,8 +1282,6 @@ public class FortranFormat {
 			}
 			save.replace(place - 1, place - 1 + sb.length(), sb.toString());
 			sb = save;
-			save = null;
-			place = -1;
 		}
 		if (options.isAddReturn()) {
 			sb.append("\n");
