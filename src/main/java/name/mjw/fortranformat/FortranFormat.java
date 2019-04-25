@@ -51,7 +51,7 @@ import java.util.StringTokenizer;
 public class FortranFormat {
 
 	/** A hash of the descriptors for easy access. */
-	private static final HashMap<String, EditDescriptor> DESCRIPTOR_HASH = new HashMap<String, EditDescriptor>(
+	private static final HashMap<String, EditDescriptor> DESCRIPTOR_HASH = new HashMap<>(
 			EditDescriptor.values().length);
 
 	static {
@@ -841,7 +841,7 @@ public class FortranFormat {
 		 * @throws ParseException the parse exception
 		 */
 		private int findClosingParenthesis(final String withParen, final int open) throws ParseException {
-			final Deque<Integer> s = new ArrayDeque<Integer>();
+			final Deque<Integer> s = new ArrayDeque<>();
 			for (int i = open + 1; i < withParen.length(); i++) {
 				final char c = withParen.charAt(i);
 				switch (c) {
@@ -869,7 +869,7 @@ public class FortranFormat {
 		 */
 		public final ArrayList<Unit> getUnits() throws ParseException {
 			final StringTokenizer st = new StringTokenizer(getCompletedInterpretation(), ",");
-			final ArrayList<Unit> units = new ArrayList<Unit>(st.countTokens());
+			final ArrayList<Unit> units = new ArrayList<>(st.countTokens());
 			while (st.hasMoreTokens()) {
 				final String s = st.nextToken();
 				boolean reachedType = false;
@@ -1188,7 +1188,7 @@ public class FortranFormat {
 	 */
 	public ArrayList<Object> parse(final String s) throws IOException {
 		final StringTokenizer st = new StringTokenizer(s, "\n");
-		final ArrayList<Object> returning = new ArrayList<Object>(units.size());
+		final ArrayList<Object> returning = new ArrayList<>(units.size());
 		StringReader sr = new StringReader(st.hasMoreTokens() ? st.nextToken() : "");
 		for (final Unit u : units) {
 			final char[] chars = new char[u.length];
@@ -1223,7 +1223,7 @@ public class FortranFormat {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public String format(final Object object) throws IOException {
-		final ArrayList<Object> input = new ArrayList<Object>(1);
+		final ArrayList<Object> input = new ArrayList<>(1);
 		input.add(object);
 		return format(input);
 	}
