@@ -10,14 +10,14 @@ pipelines:
     - parallel:
       - step:
           name: Java 8
-          image: maven:3.5.4-jdk-8-slim
+          image: maven:3.6.1-jdk-8-slim
           caches:
             - maven
           script: # Modify the commands below to build your repository.
             - mvn -B clean test javadoc:aggregate package
       - step:
           name: Java 11 
-          image: maven:3.5.4-jdk-11-slim
+          image: maven:3.6.1-jdk-11-slim
           caches:
             - maven
           script: # Modify the commands below to build your repository.
