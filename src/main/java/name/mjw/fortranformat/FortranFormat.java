@@ -197,7 +197,7 @@ public class FortranFormat {
 				if (returning == null) {
 					return null;
 				}
-				return options.isReturnFloats() && s.length() != 0 ? new Float(returning) : returning;
+				return options.isReturnFloats() && s.length() != 0 ? returning.floatValue() : returning;
 			}
 		},
 
