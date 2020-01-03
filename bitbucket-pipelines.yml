@@ -29,5 +29,11 @@ pipelines:
             - maven
           script: # Modify the commands below to build your repository.
             - mvn -B clean test
-
+      - step:
+          name: Java 14
+          image: maven:3.6-jdk-14-slim
+          caches:
+            - maven
+          script: # Modify the commands below to build your repository.
+            - mvn -B clean test
 
