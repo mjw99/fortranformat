@@ -1182,7 +1182,7 @@ public class FortranFormat {
 	 *
 	 * @param s is the input string
 	 *
-	 * @return a ArrayList<Object> of all the parsed data as Java Objects
+	 * @return all the parsed data as Java Objects
 	 *
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
