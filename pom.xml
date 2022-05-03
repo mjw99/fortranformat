@@ -61,8 +61,8 @@
 
 
 	<scm>
-		<connection>scm:git:https://bitbucket.org/mjw99/fortranformat</connection>
-		<url>https://bitbucket.org/mjw99/fortranformat</url>
+		<connection>scm:git:https://github.com/mjw99/fortranformat</connection>
+		<url>https://github.com/mjw99/fortranformat</url>
 	</scm>
 
 	<distributionManagement>
