@@ -1,12 +1,11 @@
 package name.mjw.fortranformat;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 
-import name.mjw.fortranformat.FortranFormat;
 import name.mjw.fortranformat.FortranFormat.SpecificationStringInterpreter;
 
 public class FortranFormatTest {

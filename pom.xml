@@ -24,7 +24,7 @@
 
 		<!-- Use: mvn versions:display-dependency-updates to check for updates 
 			for these below -->
-		<junit.version>4.13.2</junit.version>
+		<junit.version>5.8.2</junit.version>
 	</properties>
 
 	<prerequisites>
@@ -139,8 +139,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
 			<version>${junit.version}</version>
 			<type>jar</type>
 			<scope>test</scope>
