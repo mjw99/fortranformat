@@ -672,11 +672,11 @@ public class FortranFormat {
 			}
 			final int close = findClosingParenthesis(s, open);
 			final String before = s.substring(0, open);
-			if (before.replaceAll(" ", "").length() != 0) {
+			if (before.replace(" ", "").length() != 0) {
 				throw new ParseException("Only spaces may precede the root parenthesis.", 0);
 			}
 
-			input = s.substring(open + 1, close).replaceAll(" ", "");
+			input = s.substring(open + 1, close).replace(" ", "");
 			withCommas = checkCommas(input);
 			multipliedOut = multiplyOut(withCommas);
 			withoutParenthesis = removeParenthesis(multipliedOut);
