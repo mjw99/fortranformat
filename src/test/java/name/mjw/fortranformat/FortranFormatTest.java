@@ -8,10 +8,10 @@ import java.util.ArrayList;
 
 import name.mjw.fortranformat.FortranFormat.SpecificationStringInterpreter;
 
-public class FortranFormatTest {
+class FortranFormatTest {
 
 	@Test
-	public void testNullInputThrowsError() throws Exception {
+	void testNullInputThrowsError() throws Exception {
 		try {
 			new SpecificationStringInterpreter(null);
 			fail();
@@ -21,7 +21,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testCommaInsertionsWithBasicRepeatableDescriptors() throws Exception {
+	void testCommaInsertionsWithBasicRepeatableDescriptors() throws Exception {
 		assertEquals("I4,I4,I4", new SpecificationStringInterpreter("()").checkCommas("I4I4I4"));
 		assertEquals("I4,I4,I4", new SpecificationStringInterpreter("()").checkCommas("I4,I4,I4"));
 		assertEquals("I4,I4,I4", new SpecificationStringInterpreter("()").checkCommas("I4,I4I4"));
@@ -31,7 +31,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testCommaInsertionsWithDecimal() throws Exception {
+	void testCommaInsertionsWithDecimal() throws Exception {
 		assertEquals("(I4,I4,I4,F4.2)", new SpecificationStringInterpreter("()").checkCommas("(I4I4I4F4.2)"));
 		assertEquals("(I4,I4,F4.2,I4)", new SpecificationStringInterpreter("()").checkCommas("(I4I4F4.2I4)"));
 		assertEquals("(I4,F4.2,I4,I4)", new SpecificationStringInterpreter("()").checkCommas("(I4F4.2I4I4)"));
@@ -39,7 +39,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testCommaInsertionsWithHorizontalPositioning() throws Exception {
+	void testCommaInsertionsWithHorizontalPositioning() throws Exception {
 		assertEquals("1X,1X,1X", new SpecificationStringInterpreter("()").checkCommas("1X1X1X"));
 		assertEquals("(1X,1X,1X)", new SpecificationStringInterpreter("()").checkCommas("(1X1X1X)"));
 		assertEquals("(1X,1X)1X", new SpecificationStringInterpreter("()").checkCommas("(1X1X)1X"));
@@ -51,7 +51,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testCommaInsertionsWithMultipliers() throws Exception {
+	void testCommaInsertionsWithMultipliers() throws Exception {
 		assertEquals("2I4,I4,I4", new SpecificationStringInterpreter("()").checkCommas("2I4I4I4"));
 		assertEquals("(2I4,I4,I4)", new SpecificationStringInterpreter("()").checkCommas("(2I4I4I4)"));
 		assertEquals("(2I4,2(I4),I4)", new SpecificationStringInterpreter("()").checkCommas("(2I4,2(I4)I4)"));
@@ -60,7 +60,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testCommasNotInsertedIfEverythingIsCorrect() throws Exception {
+	void testCommasNotInsertedIfEverythingIsCorrect() throws Exception {
 		assertEquals("2I4,5X,4I4,2F4.2", new SpecificationStringInterpreter("()").checkCommas("2I4,5X,4I4,2F4.2"));
 		assertEquals("F4.2,A5,F4.2,A5,2F4.2,A5,E4.2E2,4ES5.3E2,4ES5.3E2,E4.2E2",
 				new SpecificationStringInterpreter("()")
@@ -68,7 +68,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testDescriptorsAreMultipliedOut() throws Exception {
+	void testDescriptorsAreMultipliedOut() throws Exception {
 		assertEquals("I4,I4,I4,I4", new SpecificationStringInterpreter("()").multiplyOut("4I4"));
 		assertEquals("(I4,I4,I4,I4)", new SpecificationStringInterpreter("()").multiplyOut("(4I4)"));
 		assertEquals("I4,I4,5X,I4,I4,I4,I4,F4.2,F4.2",
@@ -78,7 +78,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testParenthesisAreMultipliedOut() throws Exception {
+	void testParenthesisAreMultipliedOut() throws Exception {
 		assertEquals("(I4)(I4)(I4)(I4)", new SpecificationStringInterpreter("()").multiplyOut("4(I4)"));
 		assertEquals("((I4)(I4)(I4)(I4))", new SpecificationStringInterpreter("()").multiplyOut("(4(I4))"));
 		assertEquals("((I4,I4)(I4,I4)(I4,I4)(I4,I4))",
@@ -96,7 +96,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testParenthesisRemoved() throws Exception {
+	void testParenthesisRemoved() throws Exception {
 		// must contain root parenthesis
 		assertEquals("I4,I4,I4,I4", new SpecificationStringInterpreter("()").removeParenthesis("((I4)(I4)(I4)(I4))"));
 		assertEquals("I4,I4,I4,I4,I4,I4,I4,I4",
@@ -108,7 +108,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testParenthesisErrors() throws Exception {
+	void testParenthesisErrors() throws Exception {
 		try {
 			new SpecificationStringInterpreter("I4I4I4");
 			fail();
@@ -158,7 +158,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testInterpreterWorks() throws Exception {
+	void testInterpreterWorks() throws Exception {
 		assertEquals("I4,I4,I4", new SpecificationStringInterpreter("(I4I4I4)").getCompletedInterpretation());
 		assertEquals("I4,I4,I4", new SpecificationStringInterpreter("(I4I4I4)(I4I4I4)").getCompletedInterpretation());
 		assertEquals("I4,I4,I4", new SpecificationStringInterpreter("(I4I4I4)I4I4I4)").getCompletedInterpretation());
@@ -182,7 +182,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testUnitGeneration() throws Exception {
+	void testUnitGeneration() throws Exception {
 		assertEquals("[I4 , I4 , I4 ]", new SpecificationStringInterpreter("(I4I4I4)").getUnits().toString());
 		assertEquals("[I4 , I4 , I4 ]", new SpecificationStringInterpreter("(I4I4I4)(I4I4I4)").getUnits().toString());
 		assertEquals("[I4 , I4 , I4 ]", new SpecificationStringInterpreter("(I4I4I4)I4I4I4)").getUnits().toString());
@@ -216,7 +216,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testUnsupportedEditDescriptorException() throws Exception {
+	void testUnsupportedEditDescriptorException() throws Exception {
 		try {
 			new SpecificationStringInterpreter("(2Y2)").getUnits();
 			fail();
@@ -226,7 +226,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testIntegers() throws Exception {
+	void testIntegers() throws Exception {
 		// write
 		final ArrayList<Object> ints = new ArrayList<Object>();
 		ints.add(123);
@@ -242,7 +242,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testRealsF() throws Exception {
+	void testRealsF() throws Exception {
 		// write
 		final ArrayList<Object> floats = new ArrayList<Object>();
 		floats.add(123.345f);
@@ -265,7 +265,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testRealsE() throws Exception {
+	void testRealsE() throws Exception {
 		// write
 		final ArrayList<Object> doubles = new ArrayList<Object>();
 		doubles.add(Math.PI);
@@ -275,7 +275,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testScientific() throws Exception {
+	void testScientific() throws Exception {
 		// write
 		final ArrayList<Object> doubles = new ArrayList<Object>();
 		doubles.add(34.5678);
@@ -283,7 +283,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testEngineering() throws Exception {
+	void testEngineering() throws Exception {
 		// write
 		final ArrayList<Object> doubles = new ArrayList<Object>();
 		doubles.add(1234.567);
@@ -292,7 +292,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testLogicals() throws Exception {
+	void testLogicals() throws Exception {
 		// write
 		final ArrayList<Object> booleans = new ArrayList<Object>();
 		booleans.add(true);
@@ -304,7 +304,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testCharacters() throws Exception {
+	void testCharacters() throws Exception {
 		// write
 		final ArrayList<Object> characters = new ArrayList<Object>();
 		characters.add("12345");
@@ -324,7 +324,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testHorizontalSpaces() throws Exception {
+	void testHorizontalSpaces() throws Exception {
 		// write
 		final ArrayList<Object> os = new ArrayList<Object>();
 		os.add(12);
@@ -334,7 +334,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testRounding() throws Exception {
+	void testRounding() throws Exception {
 		// write
 		final ArrayList<Object> os = new ArrayList<Object>();
 		os.add(0.8055);
@@ -346,7 +346,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testTabs() throws Exception {
+	void testTabs() throws Exception {
 		// write
 		final ArrayList<Object> os = new ArrayList<Object>();
 		os.add(123);
@@ -355,7 +355,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testTabsAll() throws Exception {
+	void testTabsAll() throws Exception {
 		// write
 		final ArrayList<Object> os = new ArrayList<Object>();
 		os.add(123);
@@ -365,7 +365,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testVerticalPositioning() throws Exception {
+	void testVerticalPositioning() throws Exception {
 		// write
 		final ArrayList<Object> os = new ArrayList<Object>();
 		os.add(123);
@@ -378,7 +378,7 @@ public class FortranFormatTest {
 	}
 
 	@Test
-	public void testShortStringDoesntCauseError() throws Exception {
+	void testShortStringDoesntCauseError() throws Exception {
 		assertEquals("[null, , null]", FortranFormat.read("", "(I5A5I5)").toString());
 	}
 
