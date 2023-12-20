@@ -6,8 +6,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 
-import name.mjw.fortranformat.FortranFormat.SpecificationStringInterpreter;
-
 class FortranFormatTest {
 
 	@Test
