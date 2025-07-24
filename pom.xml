@@ -24,7 +24,7 @@
 
 		<!-- Use: mvn versions:display-dependency-updates to check for updates 
 			for these below -->
-		<junit.version>5.10.1</junit.version>
+		<junit.version>5.13.4</junit.version>
 	</properties>
 
 	<developers>
