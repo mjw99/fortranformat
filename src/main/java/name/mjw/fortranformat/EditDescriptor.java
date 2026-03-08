@@ -175,7 +175,11 @@ enum EditDescriptor {
 			if (returning == null) {
 				return null;
 			}
-			return options.isReturnFloats() && s.length() != 0 ? returning.floatValue() : returning;
+	                if (options.isReturnFloats() && s.length() != 0) {
+                                return returning.floatValue();
+                        }
+                        return returning;
+
 		}
 	},
 
