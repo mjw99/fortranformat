@@ -3,8 +3,12 @@ package name.mjw.fortranformat;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 class FortranFormatTest {
@@ -390,6 +394,262 @@ class FortranFormatTest {
 		final ArrayList<Object> result = ff.parse("3.14E+00");
 		assertInstanceOf(Float.class, result.get(0));
 		assertEquals(3.14f, (Float) result.get(0), 0.001f);
+	}
+	// -------------------------------------------------------------------------
+	// Options tests
+	// -------------------------------------------------------------------------
+
+	@Test
+	void testOptionsAddReturn() throws Exception {
+		final FortranFormat ff = new FortranFormat("(I5)");
+		ff.getOptions().setAddReturn(true);
+		final ArrayList<Object> data = new ArrayList<>();
+		data.add(42);
+		assertEquals("   42\n", ff.format(data));
+	}
+
+	@Test
+	void testOptionsReturnZeroForBlanksInteger() throws Exception {
+		final FortranFormat ff = new FortranFormat("(I5)");
+		ff.getOptions().setReturnZeroForBlanks(true);
+		final ArrayList<Object> result = ff.parse("     ");
+		assertEquals(0, result.get(0));
+	}
+
+	@Test
+	void testOptionsReturnZeroForBlanksReal() throws Exception {
+		final FortranFormat ff = new FortranFormat("(F5.2)");
+		ff.getOptions().setReturnZeroForBlanks(true);
+		final ArrayList<Object> result = ff.parse("     ");
+		assertEquals(0.0, (Double) result.get(0), 0.0);
+	}
+
+	@Test
+	void testOptionsLeftAlignCharacters() throws Exception {
+		final FortranFormat ff = new FortranFormat("(A8)");
+		ff.getOptions().setLeftAlignCharacters(true);
+		final ArrayList<Object> data = new ArrayList<>();
+		data.add("Hi");
+		assertEquals("Hi      ", ff.format(data));
+	}
+
+	@Test
+	void testOptionsPositioningChar() throws Exception {
+		final FortranFormat ff = new FortranFormat("(I3,3X,I3)");
+		ff.getOptions().setPositioningChar('_');
+		final ArrayList<Object> data = new ArrayList<>();
+		data.add(1);
+		data.add(2);
+		assertEquals("  1___  2", ff.format(data));
+	}
+
+	@Test
+	void testGetOptionsReturnsNonNull() throws Exception {
+		final FortranFormat ff = new FortranFormat("(I4)");
+		assertNotNull(ff.getOptions());
+	}
+
+	// -------------------------------------------------------------------------
+	// Single-object format() method
+	// -------------------------------------------------------------------------
+
+	@Test
+	void testFormatSingleObject() throws Exception {
+		final FortranFormat ff = new FortranFormat("(I5)");
+		assertEquals("   42", ff.format((Object) 42));
+	}
+
+	// -------------------------------------------------------------------------
+	// Null object formatting
+	// -------------------------------------------------------------------------
+
+	@Test
+	void testNullIntegerFormatsAsSpaces() throws Exception {
+		final ArrayList<Object> data = new ArrayList<>();
+		data.add(null);
+		assertEquals("     ", FortranFormat.write(data, "(I5)"));
+	}
+
+	@Test
+	void testNullLogicalFormatsAsSpaces() throws Exception {
+		final ArrayList<Object> data = new ArrayList<>();
+		data.add(null);
+		assertEquals("   ", FortranFormat.write(data, "(L3)"));
+	}
+
+	@Test
+	void testNullRealDecimalFormatsAsSpaces() throws Exception {
+		final ArrayList<Object> data = new ArrayList<>();
+		data.add(null);
+		assertEquals("      ", FortranFormat.write(data, "(F6.2)"));
+	}
+
+	@Test
+	void testNullCharacterFormatsAsSpaces() throws Exception {
+		final ArrayList<Object> data = new ArrayList<>();
+		data.add(null);
+		assertEquals("    ", FortranFormat.write(data, "(A4)"));
+	}
+
+	// -------------------------------------------------------------------------
+	// G descriptor (REAL_DECIMAL_REDUNDANT) — delegates to F
+	// -------------------------------------------------------------------------
+
+	@Test
+	void testGDescriptorWrite() throws Exception {
+		final ArrayList<Object> data = new ArrayList<>();
+		data.add(3.14);
+		assertEquals("      3.14", FortranFormat.write(data, "(G10.2)"));
+	}
+
+	@Test
+	void testGDescriptorRead() throws Exception {
+		assertEquals("[3.14]", FortranFormat.read("      3.14", "(G10.2)").toString());
+	}
+
+	// -------------------------------------------------------------------------
+	// D descriptor (REAL_DOUBLE) — throws on both read and write
+	// -------------------------------------------------------------------------
+
+	@Test
+	void testDDescriptorWriteThrows() throws Exception {
+		final ArrayList<Object> data = new ArrayList<>();
+		data.add(3.14);
+		assertThrows(IOException.class, () -> FortranFormat.write(data, "(D10.3)"));
+	}
+
+	@Test
+	void testDDescriptorReadThrows() throws Exception {
+		assertThrows(IOException.class, () -> FortranFormat.read("  3.14E+00", "(D10.3)"));
+	}
+
+	// -------------------------------------------------------------------------
+	// E descriptor read
+	// -------------------------------------------------------------------------
+
+	@Test
+	void testRealsERead() throws Exception {
+		// 0.31416 * 10^1 = 3.1416
+		assertEquals("[3.1416]", FortranFormat.read(" 0.31416E+01", "(E12.5)").toString());
+	}
+
+	// -------------------------------------------------------------------------
+	// ES descriptor read
+	// -------------------------------------------------------------------------
+
+	@Test
+	void testScientificRead() throws Exception {
+		assertEquals("[34.5]", FortranFormat.read("  3.450E+001", "(ES12.3E3)").toString());
+	}
+
+	// -------------------------------------------------------------------------
+	// EN descriptor read
+	// -------------------------------------------------------------------------
+
+	@Test
+	void testEngineeringRead() throws Exception {
+		assertEquals("[1234.0]", FortranFormat.read("  1.234E+003", "(EN12.3E3)").toString());
+	}
+
+	// -------------------------------------------------------------------------
+	// BN / BZ blank control descriptors
+	// -------------------------------------------------------------------------
+
+	@Test
+	void testBNDescriptorRead() throws Exception {
+		// BN is non-repeatable; values after it are parsed normally
+		assertEquals("[42]", FortranFormat.read("   42", "(BN,I5)").toString());
+	}
+
+	@Test
+	void testBZDescriptorRead() throws Exception {
+		assertEquals("[42]", FortranFormat.read("   42", "(BZ,I5)").toString());
+	}
+
+	// -------------------------------------------------------------------------
+	// Tab descriptors: non-repeatable, so parse() is never called during read;
+	// they silently consume characters.
+	// -------------------------------------------------------------------------
+
+	@Test
+	void testTabDescriptorsDoNotThrowOnRead() throws Exception {
+		// T3 is non-repeatable: consumes 3 chars, then I3 reads the next 3
+		assertEquals("[456]", FortranFormat.read("123456", "(T3,I3)").toString());
+	}
+
+	// -------------------------------------------------------------------------
+	// Sign control descriptors throw on write, no-op on read
+	// -------------------------------------------------------------------------
+
+	@Test
+	void testSignControlSWriteThrows() throws Exception {
+		final ArrayList<Object> data = new ArrayList<>();
+		data.add(1);
+		assertThrows(IOException.class, () -> FortranFormat.write(data, "(S,I5)"));
+	}
+
+	@Test
+	void testSignControlSPWriteThrows() throws Exception {
+		final ArrayList<Object> data = new ArrayList<>();
+		data.add(1);
+		assertThrows(IOException.class, () -> FortranFormat.write(data, "(SP,I5)"));
+	}
+
+	@Test
+	void testSignControlSSWriteThrows() throws Exception {
+		final ArrayList<Object> data = new ArrayList<>();
+		data.add(1);
+		assertThrows(IOException.class, () -> FortranFormat.write(data, "(SS,I5)"));
+	}
+
+	@Test
+	void testSignControlSReadIsNoOp() throws Exception {
+		// S is non-repeatable; value after it should still parse
+		assertEquals("[42]", FortranFormat.read("   42", "(S,I5)").toString());
+	}
+
+	@Test
+	void testSignControlSPReadIsNoOp() throws Exception {
+		assertEquals("[42]", FortranFormat.read("   42", "(SP,I5)").toString());
+	}
+
+	@Test
+	void testSignControlSSReadIsNoOp() throws Exception {
+		assertEquals("[42]", FortranFormat.read("   42", "(SS,I5)").toString());
+	}
+
+	// -------------------------------------------------------------------------
+	// Logical parse edge cases
+	// -------------------------------------------------------------------------
+
+	@Test
+	void testLogicalBlankReturnsNull() throws Exception {
+		final ArrayList<Object> result = FortranFormat.read("   ", "(L3)");
+		assertNull(result.get(0));
+	}
+
+	@Test
+	void testLogicalLowercaseT() throws Exception {
+		assertEquals("[true]", FortranFormat.read("true", "(L4)").toString());
+	}
+
+	// -------------------------------------------------------------------------
+	// Integer parse: returnZeroForBlanks = false returns null
+	// -------------------------------------------------------------------------
+
+	@Test
+	void testIntegerBlankReturnsNull() throws Exception {
+		final ArrayList<Object> result = FortranFormat.read("     ", "(I5)");
+		assertNull(result.get(0));
+	}
+
+	// -------------------------------------------------------------------------
+	// CHARACTER read: A with no width reads remainder of field as empty
+	// -------------------------------------------------------------------------
+
+	@Test
+	void testCharacterReadZeroWidth() throws Exception {
+		assertEquals("[ABCDE, ]", FortranFormat.read("ABCDE", "(A5,A)").toString());
 	}
 
 }
