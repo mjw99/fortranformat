@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 class FortranFormatTest {
 
@@ -391,7 +392,7 @@ class FortranFormatTest {
 		// REAL_DECIMAL.parse)
 		final FortranFormat ff = new FortranFormat("(F8.2)");
 		ff.getOptions().setReturnFloats(true);
-		final ArrayList<Object> result = ff.parse("3.14E+00");
+		final List<Object> result = ff.parse("3.14E+00");
 		assertInstanceOf(Float.class, result.get(0));
 		assertEquals(3.14f, (Float) result.get(0), 0.001f);
 	}
@@ -412,7 +413,7 @@ class FortranFormatTest {
 	void testOptionsReturnZeroForBlanksInteger() throws Exception {
 		final FortranFormat ff = new FortranFormat("(I5)");
 		ff.getOptions().setReturnZeroForBlanks(true);
-		final ArrayList<Object> result = ff.parse("     ");
+		final List<Object> result = ff.parse("     ");
 		assertEquals(0, result.get(0));
 	}
 
@@ -420,7 +421,7 @@ class FortranFormatTest {
 	void testOptionsReturnZeroForBlanksReal() throws Exception {
 		final FortranFormat ff = new FortranFormat("(F5.2)");
 		ff.getOptions().setReturnZeroForBlanks(true);
-		final ArrayList<Object> result = ff.parse("     ");
+		final List<Object> result = ff.parse("     ");
 		assertEquals(0.0, (Double) result.get(0), 0.0);
 	}
 
@@ -624,7 +625,7 @@ class FortranFormatTest {
 
 	@Test
 	void testLogicalBlankReturnsNull() throws Exception {
-		final ArrayList<Object> result = FortranFormat.read("   ", "(L3)");
+		final List<Object> result = FortranFormat.read("   ", "(L3)");
 		assertNull(result.get(0));
 	}
 
@@ -639,7 +640,7 @@ class FortranFormatTest {
 
 	@Test
 	void testIntegerBlankReturnsNull() throws Exception {
-		final ArrayList<Object> result = FortranFormat.read("     ", "(I5)");
+		final List<Object> result = FortranFormat.read("     ", "(I5)");
 		assertNull(result.get(0));
 	}
 

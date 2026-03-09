@@ -3,10 +3,6 @@
 //
 //  Copyright (c) 2009 iChemLabs, LLC.  All rights reserved.
 //
-//  $Revision: 793 $
-//  $Author: kevin $
-//  $LastChangedDate: 2009-11-15 20:03:16 -0400 (Sun, 15 Nov 2009) $
-//
 //  Redistribution and use in source and binary forms, with or without
 //  modification, are permitted provided that the following conditions are met:
 //
@@ -52,20 +48,17 @@ enum EditDescriptor {
 	CHARACTER("A", false) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
-			String use = null;
-			if (o != null) {
-				use = o instanceof String ? (String) o : o.toString();
-			}
+			var use = o instanceof String s ? s : (o != null ? o.toString() : null);
 			return format(
 					o == null ? null
-							: u.getLength() > 0 && use.length() > u.getLength() ? use.substring(0, u.getLength())
+							: u.length() > 0 && use.length() > u.length() ? use.substring(0, u.length())
 									: use,
-					use != null && u.getLength() == 0 ? use.length() : u.getLength(),
+					use != null && u.length() == 0 ? use.length() : u.length(),
 					!options.isLeftAlignCharacters());
 		}
 
 		@Override
-		public Object parse(final Unit u, final String s, final Options options) throws IOException {
+		public Object parse(final Unit u, final String s, final Options options) {
 			return s.trim();
 		}
 	},
@@ -75,13 +68,13 @@ enum EditDescriptor {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
 			String s = o == null ? null : Integer.toString((Integer) o);
-			if (s != null && u.getDecimalLength() > 0) {
+			if (s != null && u.decimalLength() > 0) {
 				final boolean neg = s.charAt(0) == '-';
 				if (neg) {
 					s = s.substring(1);
 				}
-				final int numzeros = u.getDecimalLength() - s.length();
-				final StringBuilder sb2 = new StringBuilder();
+				final int numzeros = u.decimalLength() - s.length();
+				final var sb2 = new StringBuilder();
 				if (neg) {
 					sb2.append('-');
 				}
@@ -91,20 +84,15 @@ enum EditDescriptor {
 				sb2.append(s);
 				s = sb2.toString();
 			}
-			return format(s, u.getLength(), true);
+			return format(s, u.length(), true);
 		}
 
 		@Override
-		public Object parse(final Unit u, final String s, final Options options) throws IOException {
-			if (s.length() == 0) {
-				if (options.isReturnZeroForBlanks()) {
-					return 0;
-				} else {
-					return null;
-				}
-			} else {
-				return Integer.parseInt(s);
+		public Object parse(final Unit u, final String s, final Options options) {
+			if (s.isEmpty()) {
+				return options.isReturnZeroForBlanks() ? 0 : null;
 			}
+			return Integer.parseInt(s);
 		}
 	},
 
@@ -114,19 +102,19 @@ enum EditDescriptor {
 		public String format(final Unit u, final Object o, final Options options) {
 			String s = o == null ? null : (Boolean) o ? "T" : "F";
 			if (s != null) {
-				final StringBuilder sb2 = new StringBuilder();
-				for (int j = 0; j < u.getLength() - 1; j++) {
+				final var sb2 = new StringBuilder();
+				for (int j = 0; j < u.length() - 1; j++) {
 					sb2.append(' ');
 				}
 				sb2.append(s);
 				s = sb2.toString();
 			}
-			return format(s, u.getLength(), false);
+			return format(s, u.length(), false);
 		}
 
 		@Override
-		public Object parse(final Unit u, final String s, final Options options) throws IOException {
-			return s.length() == 0 ? null : s.charAt(0) == 'T' || s.charAt(0) == 't';
+		public Object parse(final Unit u, final String s, final Options options) {
+			return s.isEmpty() ? null : s.charAt(0) == 'T' || s.charAt(0) == 't';
 		}
 	},
 
@@ -136,55 +124,53 @@ enum EditDescriptor {
 		public String format(final Unit u, final Object o, final Options options) {
 			String s = null;
 			if (o != null) {
-				Double d = o instanceof Double ? (Double) o : (Float) o;
+				double d = ((Number) o).doubleValue();
 				final boolean neg = d < 0;
 				if (neg) {
 					d *= -1;
 				}
-				final StringBuilder dfs = new StringBuilder();
-				final int intLength = Integer.toString(d.intValue()).length();
+				final var dfs = new StringBuilder();
+				final int intLength = Integer.toString((int) d).length();
 				for (int j = 0; j < intLength; j++) {
 					dfs.append('0');
 				}
 				dfs.append('.');
-				for (int j = 0; j < u.getDecimalLength(); j++) {
+				for (int j = 0; j < u.decimalLength(); j++) {
 					dfs.append('0');
 				}
 				// Work around for JDK-7131459
-				Double bd = new BigDecimal(d).setScale(u.getDecimalLength(), RoundingMode.HALF_UP).doubleValue();
-
-				s = (neg ? '-' : "") + new DecimalFormat(dfs.toString()).format(bd);
+				double bd = new BigDecimal(d).setScale(u.decimalLength(), RoundingMode.HALF_UP).doubleValue();
+				s = (neg ? "-" : "") + new DecimalFormat(dfs.toString()).format(bd);
 			}
-			return format(s, u.getLength(), true);
+			return format(s, u.length(), true);
 		}
 
 		@Override
-		public Object parse(final Unit u, String s, final Options options) throws IOException {
-			Double returning = null;
-			if (s.indexOf('E') == -1) {
-				returning = s.length() == 0 ? null
-						: Double.parseDouble(s) / (s.indexOf('.') == -1 ? Math.pow(10, u.getDecimalLength()) : 1);
+		public Object parse(final Unit u, String s, final Options options) {
+			Double returning;
+			if (!s.contains("E")) {
+				returning = s.isEmpty() ? null
+						: Double.parseDouble(s) / (s.contains(".") ? 1 : Math.pow(10, u.decimalLength()));
 			} else {
-				String end = s.substring(s.indexOf('E') + 1);
+				var end = s.substring(s.indexOf('E') + 1);
 				if (end.startsWith("+")) {
 					end = end.substring(1);
 				}
 				s = s.substring(0, s.indexOf('E'));
-				returning = s.length() == 0 ? null
-						: Double.parseDouble(s) / (s.indexOf('.') == -1 ? Math.pow(10, u.getDecimalLength()) : 1)
+				returning = s.isEmpty() ? null
+						: Double.parseDouble(s) / (s.contains(".") ? 1 : Math.pow(10, u.decimalLength()))
 								* Math.pow(10, Integer.parseInt(end));
 			}
 			if (returning == null && options.isReturnZeroForBlanks()) {
-				returning = (double) 0;
+				returning = 0.0;
 			}
 			if (returning == null) {
 				return null;
 			}
-	                if (options.isReturnFloats() && s.length() != 0) {
-                                return returning.floatValue();
-                        }
-                        return returning;
-
+			if (options.isReturnFloats() && !s.isEmpty()) {
+				return returning.floatValue();
+			}
+			return returning;
 		}
 	},
 
@@ -205,12 +191,12 @@ enum EditDescriptor {
 	REAL_DOUBLE("D", false) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) throws IOException {
-			throw new java.io.IOException("Output for the D edit descriptor is not supported.");
+			throw new IOException("Output for the D edit descriptor is not supported.");
 		}
 
 		@Override
 		public Object parse(final Unit u, final String s, final Options options) throws IOException {
-			throw new java.io.IOException("Input for the D edit descriptor is not supported.");
+			throw new IOException("Input for the D edit descriptor is not supported.");
 		}
 	},
 
@@ -220,7 +206,7 @@ enum EditDescriptor {
 		public String format(final Unit u, final Object o, final Options options) {
 			String s = null;
 			if (o != null) {
-				Double d = o instanceof Double ? (Double) o : (Float) o;
+				double d = ((Number) o).doubleValue();
 				int exp = 0;
 				final boolean neg = d < 0;
 				if (neg) {
@@ -242,25 +228,23 @@ enum EditDescriptor {
 				if (expneg) {
 					exp *= -1;
 				}
-				StringBuilder dfs = new StringBuilder();
-				dfs.append("0.");
-				for (int j = 0; j < u.getDecimalLength(); j++) {
+				var dfs = new StringBuilder("0.");
+				for (int j = 0; j < u.decimalLength(); j++) {
 					dfs.append('0');
 				}
 				// Work around for JDK-7131459
-				Double bd = new BigDecimal(d).setScale(u.getDecimalLength(), RoundingMode.HALF_UP).doubleValue();
-
+				double bd = new BigDecimal(d).setScale(u.decimalLength(), RoundingMode.HALF_UP).doubleValue();
 				s = (neg ? "-" : "") + new DecimalFormat(dfs.toString()).format(bd);
+
 				dfs = new StringBuilder();
-				for (int j = 0; j < u.getExponentLength(); j++) {
+				for (int j = 0; j < u.exponentLength(); j++) {
 					dfs.append('0');
 				}
 				// Work around for JDK-7131459
-				Double bd2 = new BigDecimal(exp).setScale(u.getDecimalLength(), RoundingMode.HALF_UP).doubleValue();
-
+				double bd2 = new BigDecimal(exp).setScale(u.decimalLength(), RoundingMode.HALF_UP).doubleValue();
 				s = s + "E" + (expneg ? "-" : "+") + new DecimalFormat(dfs.toString()).format(bd2);
 			}
-			return format(s, u.getLength(), true);
+			return format(s, u.length(), true);
 		}
 
 		@Override
@@ -275,7 +259,7 @@ enum EditDescriptor {
 		public String format(final Unit u, final Object o, final Options options) {
 			String s = null;
 			if (o != null) {
-				Double d = o instanceof Double ? (Double) o : (Float) o;
+				double d = ((Number) o).doubleValue();
 				int exp = 0;
 				final boolean neg = d < 0;
 				if (neg) {
@@ -293,22 +277,21 @@ enum EditDescriptor {
 				if (expneg) {
 					exp *= -1;
 				}
-				StringBuilder dfs = new StringBuilder();
-				dfs.append("0.");
-				for (int j = 0; j < u.getDecimalLength(); j++) {
+				var dfs = new StringBuilder("0.");
+				for (int j = 0; j < u.decimalLength(); j++) {
 					dfs.append('0');
 				}
-				s = (neg ? '-' : "") + new DecimalFormat(dfs.toString()).format(d);
+				s = (neg ? "-" : "") + new DecimalFormat(dfs.toString()).format(d);
+
 				dfs = new StringBuilder();
-				for (int j = 0; j < u.getExponentLength(); j++) {
+				for (int j = 0; j < u.exponentLength(); j++) {
 					dfs.append('0');
 				}
 				// Work around for JDK-7131459
-				Double bd = new BigDecimal(exp).setScale(u.getDecimalLength(), RoundingMode.HALF_UP).doubleValue();
-
-				s = s + 'E' + (expneg ? '-' : '+') + new DecimalFormat(dfs.toString()).format(bd);
+				double bd = new BigDecimal(exp).setScale(u.decimalLength(), RoundingMode.HALF_UP).doubleValue();
+				s = s + "E" + (expneg ? "-" : "+") + new DecimalFormat(dfs.toString()).format(bd);
 			}
-			return format(s, u.getLength(), true);
+			return format(s, u.length(), true);
 		}
 
 		@Override
@@ -323,7 +306,7 @@ enum EditDescriptor {
 		public String format(final Unit u, final Object o, final Options options) {
 			String s = null;
 			if (o != null) {
-				Double d = o instanceof Double ? (Double) o : (Float) o;
+				double d = ((Number) o).doubleValue();
 				int exp = 0;
 				final boolean neg = d < 0;
 				if (neg) {
@@ -341,22 +324,21 @@ enum EditDescriptor {
 				if (expneg) {
 					exp *= -1;
 				}
-				StringBuilder dfs = new StringBuilder();
-				dfs.append("0.");
-				for (int j = 0; j < u.getDecimalLength(); j++) {
+				var dfs = new StringBuilder("0.");
+				for (int j = 0; j < u.decimalLength(); j++) {
 					dfs.append('0');
 				}
 				s = (neg ? "-" : "") + new DecimalFormat(dfs.toString()).format(d);
+
 				dfs = new StringBuilder();
-				for (int j = 0; j < u.getExponentLength(); j++) {
+				for (int j = 0; j < u.exponentLength(); j++) {
 					dfs.append('0');
 				}
 				// Work around for JDK-7131459
-				Double bd = new BigDecimal(exp).setScale(u.getDecimalLength(), RoundingMode.HALF_UP).doubleValue();
-
+				double bd = new BigDecimal(exp).setScale(u.decimalLength(), RoundingMode.HALF_UP).doubleValue();
 				s = s + "E" + (expneg ? "-" : "+") + new DecimalFormat(dfs.toString()).format(bd);
 			}
-			return format(s, u.getLength(), true);
+			return format(s, u.length(), true);
 		}
 
 		@Override
@@ -369,12 +351,11 @@ enum EditDescriptor {
 	BLANK_CONTROL_REMOVE("BN", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) throws IOException {
-			throw new java.io.IOException("Output for the BN edit descriptor is not supported.");
+			throw new IOException("Output for the BN edit descriptor is not supported.");
 		}
 
 		@Override
-		public Object parse(final Unit u, final String s, final Options options) throws IOException {
-			// do nothing
+		public Object parse(final Unit u, final String s, final Options options) {
 			return null;
 		}
 	},
@@ -383,12 +364,11 @@ enum EditDescriptor {
 	BLANK_CONTROL_ZEROS("BZ", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) throws IOException {
-			throw new java.io.IOException("Output for the BZ edit descriptor is not supported.");
+			throw new IOException("Output for the BZ edit descriptor is not supported.");
 		}
 
 		@Override
-		public Object parse(final Unit u, final String s, final Options options) throws IOException {
-			// do nothing
+		public Object parse(final Unit u, final String s, final Options options) {
 			return null;
 		}
 	},
@@ -397,13 +377,11 @@ enum EditDescriptor {
 	FORMAT_SCANNING_CONTROL(":", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
-			// Do nothing
 			return "";
 		}
 
 		@Override
-		public Object parse(final Unit u, final String s, final Options options) throws IOException {
-			// never called
+		public Object parse(final Unit u, final String s, final Options options) {
 			return null;
 		}
 	},
@@ -412,16 +390,11 @@ enum EditDescriptor {
 	POSITIONING_HORIZONTAL("X", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
-			final StringBuilder sb = new StringBuilder();
-			for (int j = 0; j < u.getLength(); j++) {
-				sb.append(options.getPositioningChar());
-			}
-			return sb.toString();
+			return String.valueOf(options.getPositioningChar()).repeat(u.length());
 		}
 
 		@Override
-		public Object parse(final Unit u, final String s, final Options options) throws IOException {
-			// do nothing
+		public Object parse(final Unit u, final String s, final Options options) {
 			return null;
 		}
 	},
@@ -430,13 +403,12 @@ enum EditDescriptor {
 	POSITIONING_TAB("T", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
-			// never called
 			return null;
 		}
 
 		@Override
 		public Object parse(final Unit u, final String s, final Options options) throws IOException {
-			throw new java.io.IOException("Input for the T edit descriptor is not supported.");
+			throw new IOException("Input for the T edit descriptor is not supported.");
 		}
 	},
 
@@ -444,13 +416,12 @@ enum EditDescriptor {
 	POSITIONING_TAB_LEFT("TL", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
-			// never called
 			return null;
 		}
 
 		@Override
 		public Object parse(final Unit u, final String s, final Options options) throws IOException {
-			throw new java.io.IOException("Input for the TL edit descriptor is not supported.");
+			throw new IOException("Input for the TL edit descriptor is not supported.");
 		}
 	},
 
@@ -458,13 +429,12 @@ enum EditDescriptor {
 	POSITIONING_TAB_RIGHT("TR", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
-			// never called
 			return null;
 		}
 
 		@Override
 		public Object parse(final Unit u, final String s, final Options options) throws IOException {
-			throw new java.io.IOException("Input for the TR edit descriptor is not supported.");
+			throw new IOException("Input for the TR edit descriptor is not supported.");
 		}
 	},
 
@@ -476,8 +446,7 @@ enum EditDescriptor {
 		}
 
 		@Override
-		public Object parse(final Unit u, final String s, final Options options) throws IOException {
-			// never called
+		public Object parse(final Unit u, final String s, final Options options) {
 			return null;
 		}
 	},
@@ -486,12 +455,11 @@ enum EditDescriptor {
 	SIGN_CONTROL_COMPILER("S", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) throws IOException {
-			throw new java.io.IOException("Output for the S edit descriptor is not supported.");
+			throw new IOException("Output for the S edit descriptor is not supported.");
 		}
 
 		@Override
-		public Object parse(final Unit u, final String s, final Options options) throws IOException {
-			// do nothing
+		public Object parse(final Unit u, final String s, final Options options) {
 			return null;
 		}
 	},
@@ -500,12 +468,11 @@ enum EditDescriptor {
 	SIGN_CONTROL_POSITIVE_ALWAYS("SP", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) throws IOException {
-			throw new java.io.IOException("Output for the SP edit descriptor is not supported.");
+			throw new IOException("Output for the SP edit descriptor is not supported.");
 		}
 
 		@Override
-		public Object parse(final Unit u, final String s, final Options options) throws IOException {
-			// do nothing
+		public Object parse(final Unit u, final String s, final Options options) {
 			return null;
 		}
 	},
@@ -514,29 +481,31 @@ enum EditDescriptor {
 	SIGN_CONTROL_POSITIVE_NEVER("SS", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) throws IOException {
-			throw new java.io.IOException("Output for the SS edit descriptor is not supported.");
+			throw new IOException("Output for the SS edit descriptor is not supported.");
 		}
 
 		@Override
-		public Object parse(final Unit u, final String s, final Options options) throws IOException {
-			// do nothing
+		public Object parse(final Unit u, final String s, final Options options) {
 			return null;
 		}
 	};
 
-	/** The tag. */
+	/** The Fortran format tag string used to identify this descriptor (e.g. {@code "A"}, {@code "I"}, {@code "F"}). */
 	private final String tag;
 
-	/** If non-repeatable. */
+	/**
+	 * Whether this descriptor is non-repeatable (i.e. a control descriptor that does not
+	 * consume a data item from the argument list).
+	 */
 	private final boolean nonRepeatable;
 
 	/**
-	 * Instantiates a new edit descriptor.
+	 * Constructs an edit descriptor constant.
 	 *
-	 * @param tag           the edit descriptor tag
-	 * @param nonRepeatable whether the edit descriptor is non-repeatable
+	 * @param tag            the Fortran format tag string (e.g. {@code "A"}, {@code "I"})
+	 * @param nonRepeatable  {@code true} if this is a non-repeatable control descriptor
 	 */
-	private EditDescriptor(final String tag, final boolean nonRepeatable) {
+	EditDescriptor(final String tag, final boolean nonRepeatable) {
 		this.tag = tag;
 		this.nonRepeatable = nonRepeatable;
 	}
@@ -586,29 +555,21 @@ enum EditDescriptor {
 	 * @return the formatted string
 	 */
 	String format(final String s, final int length, final boolean rightAligned) {
-		final StringBuilder sb = new StringBuilder();
+		final var sb = new StringBuilder();
 		if (s == null) {
-			for (int i = 0; i < length; i++) {
-				sb.append(' ');
-			}
+			sb.append(" ".repeat(length));
 		} else if (length == -1) {
 			sb.append(s);
 		} else if (s.length() > length) {
-			for (int i = 0; i < length; i++) {
-				sb.append('*');
-			}
+			sb.append("*".repeat(length));
 		} else {
 			final int dif = length - s.length();
 			if (rightAligned) {
-				for (int j = 0; j < dif; j++) {
-					sb.append(' ');
-				}
+				sb.append(" ".repeat(dif));
 			}
 			sb.append(s);
 			if (!rightAligned) {
-				for (int j = 0; j < dif; j++) {
-					sb.append(' ');
-				}
+				sb.append(" ".repeat(dif));
 			}
 		}
 		return sb.toString();

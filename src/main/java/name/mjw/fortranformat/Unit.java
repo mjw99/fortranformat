@@ -3,10 +3,6 @@
 //
 //  Copyright (c) 2009 iChemLabs, LLC.  All rights reserved.
 //
-//  $Revision: 793 $
-//  $Author: kevin $
-//  $LastChangedDate: 2009-11-15 20:03:16 -0400 (Sun, 15 Nov 2009) $
-//
 //  Redistribution and use in source and binary forms, with or without
 //  modification, are permitted provided that the following conditions are met:
 //
@@ -36,69 +32,34 @@ package name.mjw.fortranformat;
 /**
  * Holds a single parsed Fortran edit descriptor together with its width ({@code w}),
  * decimal ({@code d}), and exponent ({@code e}) parameters.
+ *
+ * @param type           the edit descriptor constant
+ * @param length         the total field width {@code w}
+ * @param decimalLength  the number of digits after the decimal point {@code d}
+ * @param exponentLength the number of digits in the exponent field {@code e}
  */
-class Unit {
-
-	/** The Edit Descriptor type. */
-	final EditDescriptor type;
-
-	/** The length 'w'. */
-	final int length;
-
-	/** The decimal length 'd'. */
-	int decimalLength;
-
-	/** The exponent length 'e'. */
-	int exponentLength;
+record Unit(EditDescriptor type, int length, int decimalLength, int exponentLength) {
 
 	/**
-	 * Instantiates a new unit.
+	 * Convenience constructor for descriptors that require only a field width.
+	 * Sets {@code decimalLength} and {@code exponentLength} to zero.
 	 *
-	 * @param type   the type
-	 * @param length the length 'w'
+	 * @param type   the edit descriptor constant
+	 * @param length the total field width {@code w}
 	 */
-	public Unit(final EditDescriptor type, final int length) {
-		this.type = type;
-		this.length = length;
+	Unit(EditDescriptor type, int length) {
+		this(type, length, 0, 0);
 	}
 
 	/**
 	 * Returns a string representation of this unit in Fortran edit descriptor notation,
 	 * e.g. {@code F10.4} or {@code E12.6E2}.
-	 *
-	 * @return the Fortran edit descriptor string for this unit
 	 */
 	@Override
 	public String toString() {
-		return type.getTag() + length + (decimalLength > 0 ? "." + decimalLength : "")
-				+ (exponentLength > 0 ? "E" + exponentLength : "") + " ";
+		return type.getTag() + length
+				+ (decimalLength > 0 ? "." + decimalLength : "")
+				+ (exponentLength > 0 ? "E" + exponentLength : "")
+				+ " ";
 	}
-
-	/**
-	 * Gets the length.
-	 *
-	 * @return the length
-	 */
-	public int getLength() {
-		return length;
-	}
-
-	/**
-	 * Gets the decimal length.
-	 *
-	 * @return the decimal length
-	 */
-	public int getDecimalLength() {
-		return decimalLength;
-	}
-
-	/**
-	 * Gets the exponent length.
-	 *
-	 * @return the exponent length
-	 */
-	public int getExponentLength() {
-		return exponentLength;
-	}
-
 }

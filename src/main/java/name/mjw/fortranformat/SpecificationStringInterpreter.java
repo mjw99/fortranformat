@@ -3,10 +3,6 @@
 //
 //  Copyright (c) 2009 iChemLabs, LLC.  All rights reserved.
 //
-//  $Revision: 793 $
-//  $Author: kevin $
-//  $LastChangedDate: 2009-11-15 20:03:16 -0400 (Sun, 15 Nov 2009) $
-//
 //  Redistribution and use in source and binary forms, with or without
 //  modification, are permitted provided that the following conditions are met:
 //
@@ -36,8 +32,7 @@ package name.mjw.fortranformat;
 import java.text.ParseException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
-import java.util.StringTokenizer;
+import java.util.Objects;
 
 /**
  * Parses a Fortran format specification string into a list of {@link Unit} objects.
@@ -48,12 +43,19 @@ import java.util.StringTokenizer;
  */
 class SpecificationStringInterpreter {
 
-	/** Cached strings along each step of the pre-processing. */
-
+	/** The original format specification string as supplied by the caller. */
 	private final String original;
+
+	/** The content extracted from inside the outermost parentheses, with whitespace removed. */
 	private final String input;
+
+	/** The format string after parenthesised groups have been flattened. */
 	private final String withoutParenthesis;
+
+	/** The format string after repeat-count notation (e.g. {@code 3I5}) has been expanded. */
 	private final String multipliedOut;
+
+	/** The format string after comma separators have been inserted in the correct positions. */
 	private final String withCommas;
 
 	/**
@@ -64,12 +66,9 @@ class SpecificationStringInterpreter {
 	 * @throws ParseException the parse exception
 	 */
 	public SpecificationStringInterpreter(final String s) throws ParseException {
-		if (s == null) {
-			throw new NullPointerException("The format specification string may not be null.");
-		}
+		Objects.requireNonNull(s, "The format specification string may not be null.");
 		original = s;
 
-		// check for malformatted root parenthesis
 		final int open = s.indexOf('(');
 		if (open == -1) {
 			throw new ParseException(
@@ -77,8 +76,8 @@ class SpecificationStringInterpreter {
 					0);
 		}
 		final int close = findClosingParenthesis(s, open);
-		final String before = s.substring(0, open);
-		if (before.replace(" ", "").length() != 0) {
+		final var before = s.substring(0, open);
+		if (!before.replace(" ", "").isEmpty()) {
 			throw new ParseException("Only spaces may precede the root parenthesis.", 0);
 		}
 
@@ -96,14 +95,13 @@ class SpecificationStringInterpreter {
 	 * @return the string
 	 */
 	final String checkCommas(final String input) {
-		final StringBuilder sb = new StringBuilder();
+		final var sb = new StringBuilder();
 		boolean hitE = false;
 		boolean lastWasChar = true;
 		boolean foundNotNum = false;
 		for (int i = 0; i < input.length(); i++) {
 			final char c = input.charAt(i);
 			if (c == '(' || c == ')' || c == ',') {
-				// skip over
 				sb.append(c);
 			} else if (c == EditDescriptor.POSITIONING_HORIZONTAL.getTag().charAt(0)) {
 				sb.append(c);
@@ -147,9 +145,9 @@ class SpecificationStringInterpreter {
 	 * @throws ParseException the parse exception
 	 */
 	final String multiplyOut(final String input) throws ParseException {
-		final StringBuilder sb = new StringBuilder();
-		final StringBuilder current = new StringBuilder();
-		final StringBuilder number = new StringBuilder();
+		final var sb = new StringBuilder();
+		final var current = new StringBuilder();
+		final var number = new StringBuilder();
 		int multiplier = 1;
 		for (int i = 0; i < input.length(); i++) {
 			final char c = input.charAt(i);
@@ -159,13 +157,13 @@ class SpecificationStringInterpreter {
 				}
 				if (current.length() > 0) {
 					for (int j = 0; j < multiplier; j++) {
-						sb.append(current.toString());
+						sb.append(current);
 					}
-					current.delete(0, current.length());
-					number.delete(0, number.length());
+					current.setLength(0);
+					number.setLength(0);
 				}
 				final int closing = findClosingParenthesis(input, i);
-				final String center = multiplyOut(input.substring(i + 1, closing));
+				final var center = multiplyOut(input.substring(i + 1, closing));
 				for (int j = 0; j < multiplier; j++) {
 					sb.append('(');
 					sb.append(center);
@@ -173,33 +171,33 @@ class SpecificationStringInterpreter {
 				}
 				i = closing;
 				multiplier = 1;
-				current.delete(0, current.length());
-				number.delete(0, number.length());
+				current.setLength(0);
+				number.setLength(0);
 			} else if (c == ',') {
 				for (int j = 0; j < multiplier; j++) {
-					sb.append(current.toString());
+					sb.append(current);
 					sb.append(',');
 				}
 				multiplier = 1;
-				current.delete(0, current.length());
+				current.setLength(0);
 			} else if (Character.isDigit(c) && current.length() == 0) {
 				number.append(c);
 			} else {
 				if (c == EditDescriptor.POSITIONING_HORIZONTAL.getTag().charAt(0)) {
 					sb.append(number);
-					number.delete(0, number.length());
+					number.setLength(0);
 					number.append('1');
 				}
 				if (number.length() > 0) {
 					multiplier = Integer.parseInt(number.toString());
-					number.delete(0, number.length());
+					number.setLength(0);
 				}
 				current.append(c);
 			}
 		}
 		if (current.length() > 0) {
 			for (int j = 0; j < multiplier; j++) {
-				sb.append(current.toString());
+				sb.append(current);
 				if (j != multiplier - 1) {
 					sb.append(',');
 				}
@@ -214,21 +212,20 @@ class SpecificationStringInterpreter {
 	 * @param input the input
 	 *
 	 * @return the string
-	 *
 	 */
 	final String removeParenthesis(final String input) {
-		final StringBuilder sb = new StringBuilder();
+		final var sb = new StringBuilder();
 		boolean hitParenthesis = false;
 		for (int i = 0; i < input.length(); i++) {
 			final char c = input.charAt(i);
 			if (c == '(' || c == ')') {
 				hitParenthesis = true;
 			} else {
-				if (hitParenthesis && sb.length() != 0 && sb.charAt(sb.length() - 1) != ',') {
+				if (hitParenthesis && !sb.isEmpty() && sb.charAt(sb.length() - 1) != ',') {
 					sb.append(',');
 				}
 				hitParenthesis = false;
-				if (c != ',' || (sb.length() != 0 && sb.charAt(sb.length() - 1) != ',')) {
+				if (c != ',' || (!sb.isEmpty() && sb.charAt(sb.length() - 1) != ',')) {
 					sb.append(c);
 				}
 			}
@@ -247,20 +244,16 @@ class SpecificationStringInterpreter {
 	 * @throws ParseException the parse exception
 	 */
 	private int findClosingParenthesis(final String withParen, final int open) throws ParseException {
-		final Deque<Integer> s = new ArrayDeque<>();
+		final var stack = new ArrayDeque<Integer>();
 		for (int i = open + 1; i < withParen.length(); i++) {
-			final char c = withParen.charAt(i);
-			switch (c) {
-			case ')':
-				if (s.isEmpty()) {
-					return i;
-				} else {
-					s.pop();
+			switch (withParen.charAt(i)) {
+				case ')' -> {
+					if (stack.isEmpty()) {
+						return i;
+					}
+					stack.pop();
 				}
-				break;
-			case '(':
-				s.push(i);
-				break;
+				case '(' -> stack.push(i);
 			}
 		}
 		throw new ParseException("Missing a close parenthesis.", open);
@@ -274,18 +267,20 @@ class SpecificationStringInterpreter {
 	 * @throws ParseException the parse exception
 	 */
 	public final ArrayList<Unit> getUnits() throws ParseException {
-		final StringTokenizer st = new StringTokenizer(getCompletedInterpretation(), ",");
-		final ArrayList<Unit> units = new ArrayList<>(st.countTokens());
-		while (st.hasMoreTokens()) {
-			final String s = st.nextToken();
+		final var tokens = getCompletedInterpretation().split(",");
+		final var units = new ArrayList<Unit>(tokens.length);
+		for (final var s : tokens) {
+			if (s.isEmpty()) {
+				continue;
+			}
 			boolean reachedType = false;
 			boolean hasDecimal = false;
 			boolean hasExponent = false;
-			final StringBuilder before = new StringBuilder();
-			final StringBuilder type = new StringBuilder();
-			final StringBuilder decimal = new StringBuilder();
-			final StringBuilder exponent = new StringBuilder();
-			StringBuilder after = new StringBuilder();
+			final var before = new StringBuilder();
+			final var type = new StringBuilder();
+			final var decimal = new StringBuilder();
+			final var exponent = new StringBuilder();
+			var after = new StringBuilder();
 			for (int i = 0; i < s.length(); i++) {
 				if (s.charAt(i) == '.') {
 					hasDecimal = true;
@@ -306,40 +301,35 @@ class SpecificationStringInterpreter {
 					}
 				}
 			}
-			int repeats = before.length() == 0 ? 1 : Integer.parseInt(before.toString());
+			int repeats = before.isEmpty() ? 1 : Integer.parseInt(before.toString());
 			if (type.toString().equals(EditDescriptor.POSITIONING_HORIZONTAL.getTag())) {
 				after = before;
 				repeats = 1;
 			}
-			if (type.toString().equals(EditDescriptor.REAL_EXPONENT.getTag()) && exponent.length() == 0) {
+			if (type.toString().equals(EditDescriptor.REAL_EXPONENT.getTag()) && exponent.isEmpty()) {
 				exponent.append('2');
 			}
 			for (int i = 0; i < repeats; i++) {
 				if (!FortranFormat.DESCRIPTOR_HASH.containsKey(type.toString())) {
-					throw new ParseException("Unsupported Edit Descriptor: " + type.toString(),
+					throw new ParseException("Unsupported Edit Descriptor: " + type,
 							original.indexOf(type.toString()));
 				}
-				final Unit u = new Unit(FortranFormat.DESCRIPTOR_HASH.get(type.toString()),
-						after.length() == 0 ? 0 : Integer.parseInt(after.toString()));
-				if (decimal.length() != 0) {
-					u.decimalLength = Integer.parseInt(decimal.toString());
-				}
-				if (exponent.length() != 0) {
-					u.exponentLength = Integer.parseInt(exponent.toString());
-				}
-				units.add(u);
+				final int len = after.isEmpty() ? 0 : Integer.parseInt(after.toString());
+				final int decLen = decimal.isEmpty() ? 0 : Integer.parseInt(decimal.toString());
+				final int expLen = exponent.isEmpty() ? 0 : Integer.parseInt(exponent.toString());
+				units.add(new Unit(FortranFormat.DESCRIPTOR_HASH.get(type.toString()), len, decLen, expLen));
 			}
 		}
 		return units;
 	}
 
 	/**
-	 * Gets the completed interpretation.
+	 * Returns the fully pre-processed format string: commas inserted, repeat counts
+	 * expanded, and parentheses removed.
 	 *
-	 * @return the completed interpretation
+	 * @return the flattened, comma-separated descriptor string ready for tokenisation
 	 */
 	public String getCompletedInterpretation() {
 		return withoutParenthesis;
 	}
-
 }
