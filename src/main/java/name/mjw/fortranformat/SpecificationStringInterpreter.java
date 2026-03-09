@@ -228,7 +228,7 @@ class SpecificationStringInterpreter {
 					sb.append(',');
 				}
 				hitParenthesis = false;
-				if (c != ',' || sb.charAt(sb.length() - 1) != ',') {
+				if (c != ',' || (sb.length() != 0 && sb.charAt(sb.length() - 1) != ',')) {
 					sb.append(c);
 				}
 			}

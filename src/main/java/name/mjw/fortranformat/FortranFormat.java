@@ -174,7 +174,7 @@ public class FortranFormat {
 		StringBuilder sb = new StringBuilder();
 		int place = -1;
 		StringBuilder save = null;
-		for (int i = 0; i < objects.size() + minus; i++) {
+		for (int i = 0; i < objects.size() + minus && i < units.size(); i++) {
 			final Unit u = units.get(i);
 			final Object o = objects.get(i - minus);
 			if (u.type == EditDescriptor.POSITIONING_TAB || u.type == EditDescriptor.POSITIONING_TAB_LEFT

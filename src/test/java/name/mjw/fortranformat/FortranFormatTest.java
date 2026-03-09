@@ -652,4 +652,19 @@ class FortranFormatTest {
 		assertEquals("[ABCDE, ]", FortranFormat.read("ABCDE", "(A5,A)").toString());
 	}
 
+	@Test
+	void testRemoveParenthesisWithLeadingCommaDoesNotThrow() throws Exception {
+		// Should not throw StringIndexOutOfBoundsException; leading comma is a no-op
+		assertEquals("I4", new SpecificationStringInterpreter("()").removeParenthesis(",I4"));
+	}
+
+	@Test
+	void testFormatWithMoreObjectsThanFormatSlots() throws Exception {
+		final ArrayList<Object> data = new ArrayList<>();
+		data.add(1);
+		data.add(2);
+		// Format has only one slot; the extra object should be silently ignored
+		assertEquals("    1", FortranFormat.write(data, "(I5)"));
+	}
+
 }
