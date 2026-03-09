@@ -57,8 +57,9 @@
 
 
 	<scm>
-		<connection>scm:git:https://github.com/mjw99/fortranformat</connection>
 		<url>https://github.com/mjw99/fortranformat</url>
+		<connection>scm:git:https://github.com/mjw99/fortranformat</connection>
+		<developerConnection>scm:git:https://github.com/mjw99/fortranformat.git</developerConnection>
   </scm>
 
 	<build>
