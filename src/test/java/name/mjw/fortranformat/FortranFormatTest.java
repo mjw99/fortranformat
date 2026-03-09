@@ -381,15 +381,15 @@ class FortranFormatTest {
 		assertEquals("[null, , null]", FortranFormat.read("", "(I5A5I5)").toString());
 	}
 
- 	@Test
-        void testOptionsReturnFloats() throws Exception {
-               // returnFloats applies when parsing an E-format number (E-path in REAL_DECIMAL.parse)
-               final FortranFormat ff = new FortranFormat("(F8.2)");
-               ff.getOptions().setReturnFloats(true);
-               final ArrayList<Object> result = ff.parse("3.14E+00");
-               assertInstanceOf(Float.class, result.get(0));
-               assertEquals(3.14f, (Float) result.get(0), 0.001f);
-        }
-
+	@Test
+	void testOptionsReturnFloats() throws Exception {
+		// returnFloats applies when parsing an E-format number (E-path in
+		// REAL_DECIMAL.parse)
+		final FortranFormat ff = new FortranFormat("(F8.2)");
+		ff.getOptions().setReturnFloats(true);
+		final ArrayList<Object> result = ff.parse("3.14E+00");
+		assertInstanceOf(Float.class, result.get(0));
+		assertEquals(3.14f, (Float) result.get(0), 0.001f);
+	}
 
 }
