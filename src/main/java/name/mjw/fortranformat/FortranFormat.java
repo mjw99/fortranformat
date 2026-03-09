@@ -41,7 +41,11 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 
 /**
- * The Class FortranFormat.
+ * Parses and formats strings according to Fortran format specifications.
+ *
+ * <p>Provides static convenience methods {@link #read(String, String)} and
+ * {@link #write(ArrayList, String)} analogous to Fortran READ/WRITE statements,
+ * as well as instance methods for repeated use of the same format specification.
  */
 public class FortranFormat {
 
@@ -157,9 +161,9 @@ public class FortranFormat {
 	}
 
 	/**
-	 * Formats the given objects.
+	 * Formats the given objects using this instance's format specification.
 	 *
-	 * @param objects are the Java Objects to be formatted
+	 * @param objects the Java Objects to be formatted
 	 *
 	 * @return the formatted string
 	 *

@@ -34,7 +34,8 @@
 package name.mjw.fortranformat;
 
 /**
- * The Class Unit. Holds a single Edit Descriptor.
+ * Holds a single parsed Fortran edit descriptor together with its width ({@code w}),
+ * decimal ({@code d}), and exponent ({@code e}) parameters.
  */
 class Unit {
 
@@ -61,10 +62,11 @@ class Unit {
 		this.length = length;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
+	/**
+	 * Returns a string representation of this unit in Fortran edit descriptor notation,
+	 * e.g. {@code F10.4} or {@code E12.6E2}.
+	 *
+	 * @return the Fortran edit descriptor string for this unit
 	 */
 	@Override
 	public String toString() {

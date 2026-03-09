@@ -39,11 +39,16 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 /**
- * The Enum EditDescriptor.
+ * Fortran edit descriptors that define how individual data items are read or written.
+ *
+ * <p>Each constant corresponds to a Fortran format edit descriptor (e.g. {@code A}, {@code I},
+ * {@code F}, {@code E}) and provides the associated {@link #format} and {@link #parse} logic.
+ * Non-repeatable descriptors (control descriptors such as {@code X}, {@code T}, {@code /}) are
+ * flagged via {@link #isNonRepeatable()}.
  */
 enum EditDescriptor {
 
-	/** The CHARACTER. */
+	/** Character (string) edit descriptor — Fortran {@code A} descriptor. */
 	CHARACTER("A", false) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
@@ -65,7 +70,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The INTEGER. */
+	/** Integer edit descriptor — Fortran {@code I} descriptor. */
 	INTEGER("I", false) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
@@ -103,7 +108,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The LOGICAL. */
+	/** Logical (boolean) edit descriptor — Fortran {@code L} descriptor. */
 	LOGICAL("L", false) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
@@ -125,7 +130,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The REAL_DECIMAL. */
+	/** Real (fixed-point decimal) edit descriptor — Fortran {@code F} descriptor. */
 	REAL_DECIMAL("F", false) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
@@ -183,7 +188,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The REAL_DECIMAL_REDUNDANT. */
+	/** Generalised real edit descriptor — Fortran {@code G} descriptor. Delegates to {@link #REAL_DECIMAL}. */
 	REAL_DECIMAL_REDUNDANT("G", false) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) throws IOException {
@@ -196,7 +201,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The REAL_DOUBLE. */
+	/** Double-precision real edit descriptor — Fortran {@code D} descriptor. Not supported for I/O. */
 	REAL_DOUBLE("D", false) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) throws IOException {
@@ -209,7 +214,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The REAL_ENGINEERING. */
+	/** Engineering notation real edit descriptor — Fortran {@code EN} descriptor. */
 	REAL_ENGINEERING("EN", false) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
@@ -264,7 +269,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The REAL_EXPONENT. */
+	/** Exponential notation real edit descriptor — Fortran {@code E} descriptor. */
 	REAL_EXPONENT("E", false) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
@@ -312,7 +317,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The REAL_SCIENTIFIC. */
+	/** Scientific notation real edit descriptor — Fortran {@code ES} descriptor. */
 	REAL_SCIENTIFIC("ES", false) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
@@ -360,7 +365,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The BLANK_CONTROL_REMOVE. */
+	/** Blank control (ignore blanks) edit descriptor — Fortran {@code BN} descriptor. Output not supported. */
 	BLANK_CONTROL_REMOVE("BN", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) throws IOException {
@@ -374,7 +379,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The BLANK_CONTROL_ZEROS. */
+	/** Blank control (treat blanks as zeros) edit descriptor — Fortran {@code BZ} descriptor. Output not supported. */
 	BLANK_CONTROL_ZEROS("BZ", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) throws IOException {
@@ -388,7 +393,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The FORMAT_SCANNING_CONTROL. */
+	/** Format scanning control descriptor — Fortran {@code :} descriptor. Terminates format scanning when no more data items remain. */
 	FORMAT_SCANNING_CONTROL(":", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
@@ -403,7 +408,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The POSITIONING_HORIZONTAL. */
+	/** Horizontal spacing edit descriptor — Fortran {@code X} descriptor. Skips {@code n} character positions. */
 	POSITIONING_HORIZONTAL("X", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
@@ -421,7 +426,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The POSITIONING_TAB. */
+	/** Absolute tab positioning edit descriptor — Fortran {@code T} descriptor. Input not supported. */
 	POSITIONING_TAB("T", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
@@ -435,7 +440,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The POSITIONING_TAB_LEFT. */
+	/** Left-relative tab positioning edit descriptor — Fortran {@code TL} descriptor. Input not supported. */
 	POSITIONING_TAB_LEFT("TL", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
@@ -449,7 +454,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The POSITIONING_TAB_RIGHT. */
+	/** Right-relative tab positioning edit descriptor — Fortran {@code TR} descriptor. Input not supported. */
 	POSITIONING_TAB_RIGHT("TR", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
@@ -463,7 +468,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The POSITIONING_VERTICAL. */
+	/** Vertical positioning (record separator) edit descriptor — Fortran {@code /} descriptor. Moves to a new record. */
 	POSITIONING_VERTICAL("/", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) {
@@ -477,7 +482,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The SIGN_CONTROL_COMPILER. */
+	/** Sign control (compiler default) edit descriptor — Fortran {@code S} descriptor. Output not supported. */
 	SIGN_CONTROL_COMPILER("S", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) throws IOException {
@@ -491,7 +496,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The SIGN_CONTROL_POSITIVE_ALWAYS. */
+	/** Sign control (always show plus sign) edit descriptor — Fortran {@code SP} descriptor. Output not supported. */
 	SIGN_CONTROL_POSITIVE_ALWAYS("SP", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) throws IOException {
@@ -505,7 +510,7 @@ enum EditDescriptor {
 		}
 	},
 
-	/** The SIGN_CONTROL_POSITIVE_NEVER. */
+	/** Sign control (suppress plus sign) edit descriptor — Fortran {@code SS} descriptor. Output not supported. */
 	SIGN_CONTROL_POSITIVE_NEVER("SS", true) {
 		@Override
 		public String format(final Unit u, final Object o, final Options options) throws IOException {
@@ -526,10 +531,10 @@ enum EditDescriptor {
 	private final boolean nonRepeatable;
 
 	/**
-	 * Instantiates a new edits the descriptor.
+	 * Instantiates a new edit descriptor.
 	 *
 	 * @param tag           the edit descriptor tag
-	 * @param nonRepeatable whether the edit descriptor is non-repeatable or not
+	 * @param nonRepeatable whether the edit descriptor is non-repeatable
 	 */
 	private EditDescriptor(final String tag, final boolean nonRepeatable) {
 		this.tag = tag;

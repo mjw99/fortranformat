@@ -34,7 +34,8 @@
 package name.mjw.fortranformat;
 
 /**
- * The Class Options.
+ * Configuration options that control the behaviour of {@link FortranFormat}
+ * during parsing and formatting operations.
  */
 class Options {
 
@@ -90,9 +91,9 @@ class Options {
 	}
 
 	/**
-	 * Checks if returns are added at the end of lines during write.
+	 * Checks if a newline is appended at the end of a formatted string during write.
 	 *
-	 * @return true, if is if new lines are added at the end of lines during write
+	 * @return true, if a newline is added at the end of the formatted string
 	 */
 	public boolean isAddReturn() {
 		return addReturn;

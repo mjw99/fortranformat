@@ -40,7 +40,11 @@ import java.util.Deque;
 import java.util.StringTokenizer;
 
 /**
- * The Class SpecificationStringInterpreter.
+ * Parses a Fortran format specification string into a list of {@link Unit} objects.
+ *
+ * <p>Pre-processing is performed in several stages: comma normalisation, repeat-count
+ * expansion, and parenthesis removal. The final list of units is obtained via
+ * {@link #getUnits()}.
  */
 class SpecificationStringInterpreter {
 
