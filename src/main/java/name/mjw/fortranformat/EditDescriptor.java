@@ -42,7 +42,8 @@ import java.text.DecimalFormat;
  * Fortran edit descriptors that define how individual data items are read or written.
  *
  * <p>Each constant corresponds to a Fortran format edit descriptor (e.g. {@code A}, {@code I},
- * {@code F}, {@code E}) and provides the associated {@link #format} and {@link #parse} logic.
+ * {@code F}, {@code E}) and provides the associated {@link #format(Unit, Object, Options)} and
+ * {@link #parse(Unit, String, Options)} logic.
  * Non-repeatable descriptors (control descriptors such as {@code X}, {@code T}, {@code /}) are
  * flagged via {@link #isNonRepeatable()}.
  */
@@ -548,20 +549,20 @@ enum EditDescriptor {
 	}
 
 	/**
-	 * Gets the tag.
+	 * Returns the Fortran format tag string for this descriptor (e.g. {@code "A"}, {@code "I"}, {@code "F"}).
 	 *
-	 * @return the tag
+	 * @return the Fortran format tag
 	 */
 	public String getTag() {
 		return tag;
 	}
 
 	/**
-	 * Formats the object.
+	 * Formats the given Java object according to this edit descriptor's rules.
 	 *
-	 * @param u       the parent unit
+	 * @param u       the unit holding the field-width and precision parameters
 	 * @param o       the object to be formatted
-	 * @param options the options
+	 * @param options the formatting options
 	 *
 	 * @return the formatted string
 	 *
@@ -570,24 +571,27 @@ enum EditDescriptor {
 	public abstract String format(Unit u, Object o, Options options) throws IOException;
 
 	/**
-	 * Parses the object.
+	 * Parses the given string into a Java object according to this edit descriptor's rules.
 	 *
-	 * @param u       the parent unit
-	 * @param s       the String to be parsed
-	 * @param options the options
+	 * @param u       the unit holding the field-width and precision parameters
+	 * @param s       the string to be parsed
+	 * @param options the parsing options
 	 *
-	 * @return the parsed object
+	 * @return the parsed object, or {@code null} for blank fields when zero-for-blanks is not set
 	 *
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public abstract Object parse(Unit u, String s, Options options) throws IOException;
 
 	/**
-	 * Helper method to add spaces and right align content.
+	 * Formats a string value into a fixed-width field. Pads with spaces when shorter
+	 * than {@code length}, fills the field with asterisks on overflow, and produces a
+	 * blank field of {@code length} spaces when {@code s} is {@code null}. Passing
+	 * {@code -1} for {@code length} passes the value through unchanged.
 	 *
-	 * @param s            is the String to append
-	 * @param length       is the desired length
-	 * @param rightAligned specifies if the content should be right-aligned
+	 * @param s            the string value to format, or {@code null} for a blank field
+	 * @param length       the desired field width, or {@code -1} for no fixed width
+	 * @param rightAligned {@code true} to right-align the value; {@code false} to left-align
 	 *
 	 * @return the formatted string
 	 */
@@ -621,9 +625,10 @@ enum EditDescriptor {
 	}
 
 	/**
-	 * Checks if is non-repeatable.
+	 * Returns whether this descriptor is non-repeatable (i.e. a control descriptor such
+	 * as {@code X}, {@code T}, or {@code /} that does not consume a data item).
 	 *
-	 * @return true, if is non-repeatable
+	 * @return {@code true} if the descriptor is non-repeatable
 	 */
 	public boolean isNonRepeatable() {
 		return nonRepeatable;
