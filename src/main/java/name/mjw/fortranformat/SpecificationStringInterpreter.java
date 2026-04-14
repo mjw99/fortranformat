@@ -48,12 +48,19 @@ import java.util.StringTokenizer;
  */
 class SpecificationStringInterpreter {
 
-	/** Cached strings along each step of the pre-processing. */
-
+	/** The original, unmodified format specification string as passed to the constructor. */
 	private final String original;
+
+	/** The content between the outermost parentheses with all spaces removed. */
 	private final String input;
+
+	/** The format string after all parentheses have been removed following repeat-expansion. */
 	private final String withoutParenthesis;
+
+	/** The format string after repeat-count groups have been expanded in full. */
 	private final String multipliedOut;
+
+	/** The format string after implicit commas have been inserted between adjacent descriptors. */
 	private final String withCommas;
 
 	/**
@@ -89,11 +96,11 @@ class SpecificationStringInterpreter {
 	}
 
 	/**
-	 * Adds the commas to the correct places.
+	 * Inserts commas between adjacent edit descriptors where they are implicitly required.
 	 *
-	 * @param input the input
+	 * @param input the format string with spaces already removed
 	 *
-	 * @return the string
+	 * @return the format string with commas inserted at all required positions
 	 */
 	final String checkCommas(final String input) {
 		final StringBuilder sb = new StringBuilder();
@@ -138,13 +145,15 @@ class SpecificationStringInterpreter {
 	}
 
 	/**
-	 * Multiplies out compound descriptors.
+	 * Expands all repeat-count prefixes recursively, so that for example {@code 3I4}
+	 * becomes {@code I4,I4,I4}. Parentheses are preserved in the output; they are
+	 * removed by the subsequent {@link #removeParenthesis} step.
 	 *
-	 * @param input the input
+	 * @param input the comma-normalised format string to expand
 	 *
-	 * @return the string
+	 * @return the fully expanded format string with all repeat counts resolved, still containing parentheses
 	 *
-	 * @throws ParseException the parse exception
+	 * @throws ParseException if a parenthesised group has no matching closing parenthesis
 	 */
 	final String multiplyOut(final String input) throws ParseException {
 		final StringBuilder sb = new StringBuilder();
@@ -209,12 +218,12 @@ class SpecificationStringInterpreter {
 	}
 
 	/**
-	 * Removes the parenthesis from the specification string.
+	 * Removes all parentheses from the fully-expanded format string, inserting
+	 * commas at group boundaries as needed.
 	 *
-	 * @param input the input
+	 * @param input the expanded format string still containing parentheses
 	 *
-	 * @return the string
-	 *
+	 * @return the flat, comma-separated format string with no parentheses
 	 */
 	final String removeParenthesis(final String input) {
 		final StringBuilder sb = new StringBuilder();
@@ -237,14 +246,15 @@ class SpecificationStringInterpreter {
 	}
 
 	/**
-	 * Find the closing parenthesis to a given open parenthesis in a string.
+	 * Finds the index of the closing parenthesis that matches the opening parenthesis
+	 * at position {@code open} in {@code withParen}.
 	 *
-	 * @param withParen is the String containing the open parenthesis in question.
-	 * @param open      is the index of the open parenthesis
+	 * @param withParen the string containing the open parenthesis
+	 * @param open      the index of the open parenthesis within {@code withParen}
 	 *
-	 * @return the index of the corresponding close parenthesis
+	 * @return the index of the corresponding closing parenthesis
 	 *
-	 * @throws ParseException the parse exception
+	 * @throws ParseException if no matching closing parenthesis is found
 	 */
 	private int findClosingParenthesis(final String withParen, final int open) throws ParseException {
 		final Deque<Integer> s = new ArrayDeque<>();
@@ -334,9 +344,10 @@ class SpecificationStringInterpreter {
 	}
 
 	/**
-	 * Gets the completed interpretation.
+	 * Returns the fully processed format string: parentheses removed, repeat counts
+	 * expanded, and commas normalised. This is the string parsed by {@link #getUnits()}.
 	 *
-	 * @return the completed interpretation
+	 * @return the flat, comma-separated list of edit descriptor tokens
 	 */
 	public String getCompletedInterpretation() {
 		return withoutParenthesis;
