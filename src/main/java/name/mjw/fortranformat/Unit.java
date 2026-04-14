@@ -54,8 +54,8 @@ class Unit {
 	/**
 	 * Instantiates a new unit.
 	 *
-	 * @param type   the type
-	 * @param length the length 'w'
+	 * @param type   the edit descriptor type
+	 * @param length the field width 'w'
 	 */
 	public Unit(final EditDescriptor type, final int length) {
 		this.type = type;
