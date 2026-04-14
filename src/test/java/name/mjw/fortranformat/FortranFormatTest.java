@@ -258,6 +258,15 @@ class FortranFormatTest {
 		assertEquals(" 123.34500-123.34500", FortranFormat.write(floats, "(2F10.5)"));
 		assertEquals("123.345001**********", FortranFormat.write(floats, "(2F10.6)"));
 		assertEquals("********************", FortranFormat.write(floats, "(2F10.7)"));
+		// large values — d.intValue() overflows int range but DecimalFormat
+		// still produces the correct output because it always emits all significant digits
+		final ArrayList<Object> large = new ArrayList<Object>();
+		large.add(1.0e10);
+		large.add(-1.0e10);
+		assertEquals(" 10000000000.00-10000000000.00", FortranFormat.write(large, "(2F15.2)"));
+		large.clear();
+		large.add(1.5e12);
+		assertEquals("  1500000000000.00", FortranFormat.write(large, "(F18.2)"));
 		// read
 		assertEquals("[1.23, 4.5, 19.4]", FortranFormat.read("1 2 3 4.5 1 9.4", "(F5.2,F5.2,F5.2)").toString());
 		assertEquals("[1.2345E20]", FortranFormat.read("12345E20", "(F10.4)").toString());
