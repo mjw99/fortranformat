@@ -42,23 +42,16 @@ class Options {
 	/** The char to use when skipping positions during write. */
 	private char positioningChar = ' ';
 
-	/**
-	 * Use this to set whether or not to append a return line to the end of the
-	 * generated string during write.
-	 */
+	/** Whether to append a newline at the end of the generated string during write. */
 	private boolean addReturn = false;
 
-	/**
-	 * Use this to choose whether to return decimals as Float or Double objects.
-	 */
+	/** Whether to return decimal values as {@code float} instead of {@code double}. */
 	private boolean returnFloats = false;
 
-	/**
-	 * Use this to choose whether to return zero if a blank is read for numbers.
-	 */
+	/** Whether to return zero instead of {@code null} when a blank is read for a numeric field. */
 	private boolean returnZeroForBlanks = false;
 
-	/** Use this to choose whether character strings are left aligned. */
+	/** Whether character ({@code A}) fields are left-aligned rather than right-aligned. */
 	private boolean leftAlignCharacters = false;
 
 	/**
@@ -111,7 +104,7 @@ class Options {
 	/**
 	 * Set whether floats are returned instead of doubles.
 	 *
-	 * @param returnFloats the return floats
+	 * @param returnFloats {@code true} to return {@code float} values; {@code false} to return {@code double}
 	 */
 	public void setReturnFloats(final boolean returnFloats) {
 		this.returnFloats = returnFloats;
@@ -129,7 +122,7 @@ class Options {
 	/**
 	 * Set whether zeros are returned for blanks.
 	 *
-	 * @param returnZeroForBlanks the return zero for blanks
+	 * @param returnZeroForBlanks {@code true} to return zero instead of {@code null} for blank numeric fields
 	 */
 	public void setReturnZeroForBlanks(final boolean returnZeroForBlanks) {
 		this.returnZeroForBlanks = returnZeroForBlanks;
@@ -147,7 +140,7 @@ class Options {
 	/**
 	 * Set whether characters are left aligned.
 	 *
-	 * @param leftAlignCharacters the left align characters
+	 * @param leftAlignCharacters {@code true} to left-align character ({@code A}) fields; {@code false} to right-align
 	 */
 	public void setLeftAlignCharacters(final boolean leftAlignCharacters) {
 		this.leftAlignCharacters = leftAlignCharacters;
