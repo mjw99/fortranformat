@@ -180,10 +180,10 @@ enum EditDescriptor {
 			if (returning == null) {
 				return null;
 			}
-	                if (options.isReturnFloats() && s.length() != 0) {
-                                return returning.floatValue();
-                        }
-                        return returning;
+			if (options.isReturnFloats()) {
+				return returning.floatValue();
+			}
+			return returning;
 
 		}
 	},

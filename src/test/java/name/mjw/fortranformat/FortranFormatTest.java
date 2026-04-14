@@ -435,6 +435,18 @@ class FortranFormatTest {
 	}
 
 	@Test
+	void testOptionsReturnZeroForBlanksRealWithReturnFloats() throws Exception {
+		// When both returnZeroForBlanks and returnFloats are set, a blank field
+		// must produce Float(0.0f), not Double(0.0).
+		final FortranFormat ff = new FortranFormat("(F5.2)");
+		ff.getOptions().setReturnZeroForBlanks(true);
+		ff.getOptions().setReturnFloats(true);
+		final ArrayList<Object> result = ff.parse("     ");
+		assertInstanceOf(Float.class, result.get(0));
+		assertEquals(0.0f, (Float) result.get(0), 0.0f);
+	}
+
+	@Test
 	void testOptionsLeftAlignCharacters() throws Exception {
 		final FortranFormat ff = new FortranFormat("(A8)");
 		ff.getOptions().setLeftAlignCharacters(true);
