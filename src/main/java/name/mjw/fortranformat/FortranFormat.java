@@ -78,7 +78,7 @@ public class FortranFormat {
 	/**
 	 * Static write function similar to the Fortran implementation.
 	 *
-	 * @param objects is the vector of objects to be formatted
+	 * @param objects is the list of objects to be formatted
 	 * @param format  is the format specification
 	 *
 	 * @return the formatted string
@@ -114,7 +114,7 @@ public class FortranFormat {
 	 *
 	 * @param s is the input string
 	 *
-	 * @return all the parsed data as Java Objects
+	 * @return ArrayList of all the parsed data as Java objects
 	 *
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
