@@ -295,6 +295,16 @@ class FortranFormatTest {
 	}
 
 	@Test
+	void testZeroWithExponentialDescriptors() throws Exception {
+		// Formatting 0.0 previously caused an infinite loop in the normalization loops
+		final ArrayList<Object> zero = new ArrayList<Object>();
+		zero.add(0.0);
+		assertEquals(" 0.00000E+00", FortranFormat.write(zero, "(E12.5)"));
+		assertEquals("  0.000E+000", FortranFormat.write(zero, "(ES12.3E3)"));
+		assertEquals("  0.000E+000", FortranFormat.write(zero, "(EN12.3E3)"));
+	}
+
+	@Test
 	void testLogicals() throws Exception {
 		// write
 		final ArrayList<Object> booleans = new ArrayList<Object>();

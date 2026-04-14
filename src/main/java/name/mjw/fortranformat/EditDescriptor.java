@@ -226,17 +226,19 @@ enum EditDescriptor {
 				if (neg) {
 					d *= -1;
 				}
-				while (d > 10) {
-					d /= 10;
-					exp += 1;
-				}
-				while (d < 1) {
-					d *= 10;
-					exp -= 1;
-				}
-				while (exp % 3 != 0) {
-					d *= 10;
-					exp -= 1;
+				if (d != 0) {
+					while (d > 10) {
+						d /= 10;
+						exp += 1;
+					}
+					while (d < 1) {
+						d *= 10;
+						exp -= 1;
+					}
+					while (exp % 3 != 0) {
+						d *= 10;
+						exp -= 1;
+					}
 				}
 				final boolean expneg = exp < 0;
 				if (expneg) {
@@ -281,13 +283,15 @@ enum EditDescriptor {
 				if (neg) {
 					d *= -1;
 				}
-				while (d > 1) {
-					d /= 10;
-					exp += 1;
-				}
-				while (d < .1) {
-					d *= 10;
-					exp -= 1;
+				if (d != 0) {
+					while (d > 1) {
+						d /= 10;
+						exp += 1;
+					}
+					while (d < .1) {
+						d *= 10;
+						exp -= 1;
+					}
 				}
 				final boolean expneg = exp < 0;
 				if (expneg) {
@@ -329,13 +333,15 @@ enum EditDescriptor {
 				if (neg) {
 					d *= -1;
 				}
-				while (d > 10) {
-					d /= 10;
-					exp += 1;
-				}
-				while (d < 1) {
-					d *= 10;
-					exp -= 1;
+				if (d != 0) {
+					while (d > 10) {
+						d /= 10;
+						exp += 1;
+					}
+					while (d < 1) {
+						d *= 10;
+						exp -= 1;
+					}
 				}
 				final boolean expneg = exp < 0;
 				if (expneg) {
